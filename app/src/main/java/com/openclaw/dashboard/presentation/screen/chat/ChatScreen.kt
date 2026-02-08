@@ -210,11 +210,17 @@ fun ChatBubble(message: ChatEvent) {
         } else ""
     }
     
-    // Strip thinking tags from AI responses (not from user messages)
+    // Process content:
+    // 1. Convert escaped newlines to actual newlines
+    // 2. Strip thinking tags from AI responses (not from user messages)
+    val processedContent = rawContent
+        .replace("\\n", "\n")
+        .replace("\\t", "\t")
+    
     val content = if (!isUser) {
-        TextUtils.stripThinkingTags(rawContent)
+        TextUtils.stripThinkingTags(processedContent)
     } else {
-        rawContent
+        processedContent
     }
     
     Row(
