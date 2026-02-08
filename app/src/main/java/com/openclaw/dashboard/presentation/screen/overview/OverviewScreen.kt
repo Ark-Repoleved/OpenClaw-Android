@@ -37,6 +37,7 @@ fun OverviewScreen(
                     val (statusColor, statusIcon) = when (connectionState) {
                         is ConnectionState.Connected -> Color(0xFF4CAF50) to Icons.Filled.CheckCircle
                         is ConnectionState.Connecting -> Color(0xFFFF9800) to Icons.Filled.Sync
+                        is ConnectionState.Reconnecting -> Color(0xFFFF9800) to Icons.Filled.Refresh
                         is ConnectionState.Disconnected -> Color(0xFF9E9E9E) to Icons.Filled.Cancel
                         is ConnectionState.Error -> Color(0xFFF44336) to Icons.Filled.ErrorOutline
                     }
