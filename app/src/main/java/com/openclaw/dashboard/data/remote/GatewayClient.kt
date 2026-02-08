@@ -2,6 +2,7 @@ package com.openclaw.dashboard.data.remote
 
 import android.util.Log
 import com.openclaw.dashboard.data.model.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
@@ -25,6 +26,11 @@ class GatewayClient {
         private const val READ_TIMEOUT_SECONDS = 0L  // No timeout for WebSocket
         private const val WRITE_TIMEOUT_SECONDS = 30L
         private const val PING_INTERVAL_SECONDS = 30L
+        
+        // Auto-reconnect settings
+        private const val RECONNECT_INITIAL_DELAY_MS = 1000L
+        private const val RECONNECT_MAX_DELAY_MS = 30000L
+        private const val RECONNECT_MAX_ATTEMPTS = 10
     }
     
     private val json = Json {
@@ -48,6 +54,20 @@ class GatewayClient {
     private val _serverInfo = MutableStateFlow<ServerInfo?>(null)
     val serverInfo: StateFlow<ServerInfo?> = _serverInfo.asStateFlow()
     
+    // Auto-reconnect state
+    private var autoReconnectEnabled = true
+    private var reconnectAttempts = 0
+    private var reconnectJob: Job? = null
+    private var lastConnectionParams: ConnectionParams? = null
+    
+    private data class ConnectionParams(
+        val baseUrl: String,
+        val hfToken: String?,
+        val gatewayToken: String?,
+        val gatewayPassword: String?
+    )
+
+    
     /**
      * Connect to the Gateway server
      */
@@ -62,6 +82,12 @@ class GatewayClient {
             Log.w(TAG, "Already connected or connecting")
             return
         }
+        
+        // Save connection params for reconnect
+        lastConnectionParams = ConnectionParams(baseUrl, hfToken, gatewayToken, gatewayPassword)
+        reconnectAttempts = 0
+        autoReconnectEnabled = true
+        reconnectJob?.cancel()
         
         _connectionState.value = ConnectionState.Connecting
         
@@ -87,6 +113,7 @@ class GatewayClient {
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 Log.d(TAG, "WebSocket opened")
+                reconnectAttempts = 0  // Reset on successful connection
                 sendConnect(gatewayToken, gatewayPassword)
             }
             
@@ -98,6 +125,7 @@ class GatewayClient {
                 Log.e(TAG, "WebSocket failure: ${t.message}")
                 _connectionState.value = ConnectionState.Error(t.message ?: "Connection failed")
                 cleanup()
+                scheduleReconnect()
             }
             
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -109,14 +137,53 @@ class GatewayClient {
                 Log.d(TAG, "WebSocket closed: $code - $reason")
                 _connectionState.value = ConnectionState.Disconnected
                 cleanup()
+                // Auto-reconnect unless user explicitly disconnected
+                if (code != 1000) {
+                    scheduleReconnect()
+                }
             }
         })
+    }
+    
+    /**
+     * Schedule auto-reconnect with exponential backoff
+     */
+    private fun scheduleReconnect() {
+        if (!autoReconnectEnabled || lastConnectionParams == null) {
+            Log.d(TAG, "Auto-reconnect disabled or no connection params")
+            return
+        }
+        
+        if (reconnectAttempts >= RECONNECT_MAX_ATTEMPTS) {
+            Log.e(TAG, "Max reconnect attempts reached")
+            _connectionState.value = ConnectionState.Error("無法重新連線，已達到最大嘗試次數")
+            return
+        }
+        
+        reconnectAttempts++
+        val delay = minOf(
+            RECONNECT_INITIAL_DELAY_MS * (1L shl (reconnectAttempts - 1)),
+            RECONNECT_MAX_DELAY_MS
+        )
+        
+        Log.d(TAG, "Scheduling reconnect attempt $reconnectAttempts in ${delay}ms")
+        _connectionState.value = ConnectionState.Reconnecting(reconnectAttempts, RECONNECT_MAX_ATTEMPTS)
+        
+        reconnectJob = CoroutineScope(Dispatchers.Main).launch {
+            delay(delay)
+            lastConnectionParams?.let { params ->
+                Log.d(TAG, "Attempting reconnect...")
+                connect(params.baseUrl, params.hfToken, params.gatewayToken, params.gatewayPassword)
+            }
+        }
     }
     
     /**
      * Disconnect from the Gateway
      */
     fun disconnect() {
+        autoReconnectEnabled = false  // Disable auto-reconnect on manual disconnect
+        reconnectJob?.cancel()
         webSocket?.close(1000, "User disconnect")
         cleanup()
     }
@@ -434,6 +501,7 @@ sealed class ConnectionState {
     data object Disconnected : ConnectionState()
     data object Connecting : ConnectionState()
     data object Connected : ConnectionState()
+    data class Reconnecting(val attempt: Int, val maxAttempts: Int) : ConnectionState()
     data class Error(val message: String) : ConnectionState()
 }
 
