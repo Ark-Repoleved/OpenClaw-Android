@@ -241,8 +241,8 @@ class GatewayClient {
     private fun sendConnect(token: String?, password: String?) {
         // Build connect params
         val connectParams = buildJsonObject {
-            put("minProtocol", 1)
-            put("maxProtocol", 1)
+            put("minProtocol", 3)
+            put("maxProtocol", 3)
             
             // Build client object
             putJsonObject("client") {
