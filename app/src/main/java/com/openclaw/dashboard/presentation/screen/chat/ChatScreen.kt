@@ -112,12 +112,19 @@ fun ChatScreen(
                     )
                 }
                 else -> {
+                    // Filter out messages that shouldn't be shown to users
+                    val filteredMessages = messages.filter { msg ->
+                        val role = msg.message?.role?.lowercase() ?: ""
+                        // Hide tool results, tool calls, and system messages
+                        role !in listOf("toolresult", "tool", "system", "toolcall")
+                    }
+                    
                     LazyColumn(
                         state = listState,
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(messages) { message ->
+                        items(filteredMessages) { message ->
                             ChatBubble(message = message)
                         }
                     }
