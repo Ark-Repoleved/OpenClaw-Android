@@ -1,57 +1,59 @@
 package com.openclaw.dashboard.presentation.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.openclaw.dashboard.R
 
 /**
  * Navigation destinations for the app
  */
 sealed class Screen(
     val route: String,
-    val title: String,
+    @StringRes val titleResId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
     data object Setup : Screen(
         route = "setup",
-        title = "設定",
+        titleResId = R.string.nav_setup,
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings
     )
     
     data object Overview : Screen(
         route = "overview",
-        title = "總覽",
+        titleResId = R.string.nav_overview,
         selectedIcon = Icons.Filled.Dashboard,
         unselectedIcon = Icons.Outlined.Dashboard
     )
     
     data object Sessions : Screen(
         route = "sessions",
-        title = "Sessions",
+        titleResId = R.string.nav_sessions,
         selectedIcon = Icons.Filled.List,
         unselectedIcon = Icons.Outlined.List
     )
     
     data object Chat : Screen(
         route = "chat",
-        title = "聊天",
+        titleResId = R.string.nav_chat,
         selectedIcon = Icons.Filled.Chat,
         unselectedIcon = Icons.Outlined.Chat
     )
     
     data object Config : Screen(
         route = "config",
-        title = "配置",
+        titleResId = R.string.nav_config,
         selectedIcon = Icons.Filled.Code,
         unselectedIcon = Icons.Outlined.Code
     )
     
     data object Instances : Screen(
         route = "instances",
-        title = "裝置",
+        titleResId = R.string.nav_instances,
         selectedIcon = Icons.Filled.Devices,
         unselectedIcon = Icons.Outlined.Devices
     )
@@ -60,4 +62,3 @@ sealed class Screen(
         val bottomNavItems = listOf(Overview, Sessions, Chat, Config, Instances)
     }
 }
-
