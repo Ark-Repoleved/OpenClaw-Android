@@ -29,7 +29,7 @@ class GatewayClient {
     
     private val json = Json {
         ignoreUnknownKeys = true
-        encodeDefaults = false
+        encodeDefaults = true  // Ensure mode field is serialized
         isLenient = true
     }
     
