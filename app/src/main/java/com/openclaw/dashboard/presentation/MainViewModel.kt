@@ -3,6 +3,7 @@ package com.openclaw.dashboard.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.openclaw.dashboard.data.model.ChatAttachment
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.data.model.PresenceEntry
 import com.openclaw.dashboard.data.model.SessionInfo
