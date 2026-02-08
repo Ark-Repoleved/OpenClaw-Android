@@ -313,6 +313,18 @@ class GatewayClient {
     private fun handleResponse(jsonElement: JsonElement) {
         try {
             val response = json.decodeFromJsonElement<ResponseFrame>(jsonElement)
+            
+            // Check if this is the connect response (payload has type: "hello-ok")
+            val payload = response.payload
+            if (response.ok && payload != null) {
+                val payloadType = payload.jsonObject["type"]?.jsonPrimitive?.contentOrNull
+                if (payloadType == "hello-ok") {
+                    handleHelloOk(payload)
+                    return
+                }
+            }
+            
+            // Handle other responses
             pendingRequests[response.id]?.trySend(response)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to parse response: ${e.message}")

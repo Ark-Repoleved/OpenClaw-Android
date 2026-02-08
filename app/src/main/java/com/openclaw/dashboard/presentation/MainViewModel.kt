@@ -85,6 +85,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         
+        // Watch connection state and load data when connected
+        viewModelScope.launch {
+            connectionState.collect { state ->
+                if (state is ConnectionState.Connected) {
+                    // Load sessions when connected
+                    loadSessions()
+                }
+            }
+        }
+        
         // Auto-connect if configured
         viewModelScope.launch {
             connectionSettings.first().let { settings ->
