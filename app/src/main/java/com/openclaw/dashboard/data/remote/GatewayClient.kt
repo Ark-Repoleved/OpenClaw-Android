@@ -239,33 +239,34 @@ class GatewayClient {
     }
     
     private fun sendConnect(token: String?, password: String?) {
-        val clientInfo = ClientInfo(
-            id = "openclaw-android",  // Must be valid GATEWAY_CLIENT_ID
-            displayName = "OpenClaw Android",
-            version = "1.0.0",
-            platform = "android",
-            deviceFamily = android.os.Build.MANUFACTURER,
-            mode = "ui"  // Must be valid GATEWAY_CLIENT_MODE: webchat, cli, ui, backend, node, probe, test
-        )
-        
-        val authParams = if (!token.isNullOrBlank() || !password.isNullOrBlank()) {
-            AuthParams(token = token, password = password)
-        } else null
-        
-        val connectParams = ConnectParams(
-            client = clientInfo,
-            caps = listOf("tool-events"),  // Valid cap from GATEWAY_CLIENT_CAPS
-            auth = authParams
-        )
-        
-        // Wrap in hello frame with type field
+        // Build hello frame manually to avoid null values
         val helloFrame = buildJsonObject {
             put("type", "hello")
-            put("minProtocol", connectParams.minProtocol)
-            put("maxProtocol", connectParams.maxProtocol)
-            put("client", json.encodeToJsonElement(clientInfo))
-            connectParams.caps?.let { put("caps", json.encodeToJsonElement(it)) }
-            authParams?.let { put("auth", json.encodeToJsonElement(it)) }
+            put("minProtocol", 1)
+            put("maxProtocol", 1)
+            
+            // Build client object
+            putJsonObject("client") {
+                put("id", "openclaw-android")
+                put("displayName", "OpenClaw Android")
+                put("version", "1.0.0")
+                put("platform", "android")
+                put("deviceFamily", android.os.Build.MANUFACTURER)
+                put("mode", "ui")
+            }
+            
+            // Optional caps
+            putJsonArray("caps") {
+                add("tool-events")
+            }
+            
+            // Only include auth if we have credentials
+            if (!token.isNullOrBlank() || !password.isNullOrBlank()) {
+                putJsonObject("auth") {
+                    if (!token.isNullOrBlank()) put("token", token)
+                    if (!password.isNullOrBlank()) put("password", password)
+                }
+            }
         }
         
         val frameJson = json.encodeToString(helloFrame)
