@@ -504,8 +504,16 @@ fun ChatBubble(message: ChatEvent) {
         processedContent
     }
     
+    // Hide "[Image]" or "[n Images]" if there are attachments
+    val displayContent = if (!message.attachments.isNullOrEmpty() && 
+        (content == "[Image]" || content.matches(Regex("\\[\\d+ Images\\]")))) {
+        ""
+    } else {
+        content
+    }
+    
     // Don't render empty messages (unless there are attachments)
-    if (content.isBlank() && message.attachments.isNullOrEmpty()) {
+    if (displayContent.isBlank() && message.attachments.isNullOrEmpty()) {
         return
     }
     
@@ -563,7 +571,7 @@ fun ChatBubble(message: ChatEvent) {
             }
             
             // Render text content if not empty
-            if (content.isNotBlank()) {
+            if (displayContent.isNotBlank()) {
                 Surface(
                     color = if (isUser) {
                         MaterialTheme.colorScheme.primaryContainer
@@ -579,7 +587,7 @@ fun ChatBubble(message: ChatEvent) {
                 ) {
                     // Use Markwon for full GFM Markdown support
                     MarkdownText(
-                        markdown = content,
+                        markdown = displayContent,
                         modifier = Modifier.padding(12.dp),
                         isUserMessage = isUser
                     )
