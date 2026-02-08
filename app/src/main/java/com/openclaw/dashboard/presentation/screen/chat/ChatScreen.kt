@@ -1,12 +1,23 @@
 package com.openclaw.dashboard.presentation.screen.chat
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Base64
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,16 +30,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.openclaw.dashboard.R
+import com.openclaw.dashboard.data.model.ChatAttachment
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.presentation.MainViewModel
 import com.openclaw.dashboard.presentation.components.MarkdownText
 import com.openclaw.dashboard.util.TextUtils
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 
 
@@ -41,9 +57,35 @@ fun ChatScreen(
     val currentSessionKey by viewModel.currentSessionKey.collectAsState()
     val messages by viewModel.chatMessages.collectAsState()
     val isAiTyping by viewModel.isAiTyping.collectAsState()
+    val attachments by viewModel.chatAttachments.collectAsState()
     
+    val context = LocalContext.current
     var messageText by remember { mutableStateOf("") }
     var showSessionPicker by remember { mutableStateOf(false) }
+    
+    // Photo picker launcher
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            // Convert image to base64
+            try {
+                val inputStream = context.contentResolver.openInputStream(it)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                
+                // Compress and encode
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+                val base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+                outputStream.close()
+                
+                viewModel.addAttachment("image/jpeg", base64)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -89,11 +131,18 @@ fun ChatScreen(
                 value = messageText,
                 onValueChange = { messageText = it },
                 onSend = {
-                    if (messageText.isNotBlank()) {
+                    if (messageText.isNotBlank() || attachments.isNotEmpty()) {
                         viewModel.sendMessage(messageText)
                         messageText = ""
                     }
                 },
+                onAttach = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                attachments = attachments,
+                onRemoveAttachment = { index -> viewModel.removeAttachment(index) },
                 enabled = currentSessionKey != null
             )
         }
@@ -169,37 +218,137 @@ fun ChatInputBar(
     value: String,
     onValueChange: (String) -> Unit,
     onSend: () -> Unit,
+    onAttach: () -> Unit,
+    attachments: List<ChatAttachment>,
+    onRemoveAttachment: (Int) -> Unit,
     enabled: Boolean
 ) {
     Surface(
         tonalElevation = 3.dp
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
-                placeholder = { Text(stringResource(R.string.chat_input_hint)) },
-                modifier = Modifier.weight(1f),
-                enabled = enabled,
-                maxLines = 4,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(onSend = { onSend() }),
-                shape = RoundedCornerShape(24.dp)
-            )
-            
-            Spacer(modifier = Modifier.width(8.dp))
-            
-            FilledIconButton(
-                onClick = onSend,
-                enabled = enabled && value.isNotBlank()
-            ) {
-                Icon(Icons.Filled.Send, contentDescription = "傳送")
+            // Attachment previews
+            if (attachments.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    attachments.forEachIndexed { index, attachment ->
+                        AttachmentPreview(
+                            base64Content = attachment.content,
+                            onRemove = { onRemoveAttachment(index) }
+                        )
+                    }
+                }
             }
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Attach button
+                IconButton(
+                    onClick = onAttach,
+                    enabled = enabled
+                ) {
+                    Icon(
+                        Icons.Filled.Image,
+                        contentDescription = "附加圖片",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    placeholder = { Text(stringResource(R.string.chat_input_hint)) },
+                    modifier = Modifier.weight(1f),
+                    enabled = enabled,
+                    maxLines = 4,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { onSend() }),
+                    shape = RoundedCornerShape(24.dp)
+                )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                FilledIconButton(
+                    onClick = onSend,
+                    enabled = enabled && (value.isNotBlank() || attachments.isNotEmpty())
+                ) {
+                    Icon(Icons.Filled.Send, contentDescription = "傳送")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AttachmentPreview(
+    base64Content: String,
+    onRemove: () -> Unit
+) {
+    val bitmap = remember(base64Content) {
+        try {
+            val bytes = Base64.decode(base64Content, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
+    Box(
+        modifier = Modifier.size(72.dp)
+    ) {
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = "附件預覽",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Filled.Image,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        
+        // Remove button
+        IconButton(
+            onClick = onRemove,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(24.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = CircleShape
+                )
+        ) {
+            Icon(
+                Icons.Filled.Close,
+                contentDescription = "移除",
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onErrorContainer
+            )
         }
     }
 }

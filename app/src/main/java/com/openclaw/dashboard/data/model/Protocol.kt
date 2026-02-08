@@ -310,6 +310,19 @@ data class ChatUsage(
     val totalTokens: Int? = null
 )
 
+// ============== Attachments ==============
+
+/**
+ * Attachment for chat messages (images)
+ * Used when sending messages with image attachments
+ */
+@Serializable
+data class ChatAttachment(
+    val type: String = "image",
+    val mimeType: String,
+    val content: String  // Base64 encoded content
+)
+
 // ============== Tick & Shutdown ==============
 
 @Serializable

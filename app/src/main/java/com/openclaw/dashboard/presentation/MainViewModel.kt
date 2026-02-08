@@ -81,6 +81,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isAiTyping: StateFlow<Boolean> = _isAiTyping.asStateFlow()
     private val _activeRunIds = mutableSetOf<String>()  // Track active runIds
     
+    // Chat attachments (pending attachments to be sent)
+    private val _chatAttachments = MutableStateFlow<List<ChatAttachment>>(emptyList())
+    val chatAttachments: StateFlow<List<ChatAttachment>> = _chatAttachments.asStateFlow()
+    
     // Connected instances (from presence)
     val connectedInstances: StateFlow<List<PresenceEntry>> = snapshot
         .map { it?.presence ?: emptyList() }
@@ -306,10 +310,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     /**
-     * Send chat message
+     * Send chat message with optional attachments
      */
     fun sendMessage(message: String) {
         val sessionKey = _currentSessionKey.value ?: return
+        val attachments = _chatAttachments.value.takeIf { it.isNotEmpty() }
         
         viewModelScope.launch {
             // Add optimistic user message
@@ -327,8 +332,39 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             )
             _chatMessages.update { it + optimisticMessage }
             
-            gatewayClient.sendChatMessage(sessionKey, message)
+            // Clear attachments before sending
+            _chatAttachments.value = emptyList()
+            
+            gatewayClient.sendChatMessage(sessionKey, message, attachments)
         }
+    }
+    
+    /**
+     * Add an attachment to the pending list
+     */
+    fun addAttachment(mimeType: String, base64Content: String) {
+        val attachment = ChatAttachment(
+            type = "image",
+            mimeType = mimeType,
+            content = base64Content
+        )
+        _chatAttachments.update { it + attachment }
+    }
+    
+    /**
+     * Remove an attachment from the pending list
+     */
+    fun removeAttachment(index: Int) {
+        _chatAttachments.update { list ->
+            list.filterIndexed { i, _ -> i != index }
+        }
+    }
+    
+    /**
+     * Clear all pending attachments
+     */
+    fun clearAttachments() {
+        _chatAttachments.value = emptyList()
     }
     
     /**

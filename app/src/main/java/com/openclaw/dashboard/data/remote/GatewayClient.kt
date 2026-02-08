@@ -226,14 +226,21 @@ class GatewayClient {
     }
     
     /**
-     * Send chat message
+     * Send chat message with optional attachments
      */
-    suspend fun sendChatMessage(sessionKey: String, message: String): Result<Unit> {
+    suspend fun sendChatMessage(
+        sessionKey: String, 
+        message: String,
+        attachments: List<ChatAttachment>? = null
+    ): Result<Unit> {
         val idempotencyKey = UUID.randomUUID().toString()
         val params = buildJsonObject {
             put("sessionKey", sessionKey)
             put("message", message)
             put("idempotencyKey", idempotencyKey)
+            if (!attachments.isNullOrEmpty()) {
+                put("attachments", json.encodeToJsonElement(attachments))
+            }
         }
         
         return request("chat.send", params).map { }

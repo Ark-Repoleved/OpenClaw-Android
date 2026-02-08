@@ -49,6 +49,9 @@
     <string name="chat_input_hint">輸入訊息…</string>
     <string name="chat_send">傳送</string>
     <string name="chat_select_session">選擇對話</string>
+    <string name="chat_attach_image">附加圖片</string>
+    <string name="chat_attachment_preview">附件預覽</string>
+    <string name="chat_remove_attachment">移除</string>
     
     <!-- Instances Screen -->
     <string name="instances_title">已連線裝置</string>
