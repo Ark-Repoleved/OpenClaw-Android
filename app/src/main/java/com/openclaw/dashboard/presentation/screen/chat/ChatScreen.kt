@@ -37,9 +37,7 @@ import androidx.compose.ui.res.stringResource
 import com.openclaw.dashboard.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.model.ChatAttachment
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.presentation.MainViewModel

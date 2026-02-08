@@ -87,8 +87,8 @@
     <string name="time_active_minutes_ago">Active %d min ago</string>
     <string name="time_active_hours_ago">Active %d hours ago</string>
     <string name="time_active_days_ago">Active %d days ago</string>
-    <string name="time_days">%d days %d hours</string>
-    <string name="time_hours">%d hours %d min</string>
+    <string name="time_days">%1$d days %2$d hours</string>
+    <string name="time_hours">%1$d hours %2$d min</string>
     <string name="time_minutes">%d min</string>
     <string name="time_seconds">%d sec</string>
     

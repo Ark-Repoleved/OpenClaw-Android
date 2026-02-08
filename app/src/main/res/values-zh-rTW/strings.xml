@@ -87,8 +87,8 @@
     <string name="time_active_minutes_ago">%d 分鐘前活躍</string>
     <string name="time_active_hours_ago">%d 小時前活躍</string>
     <string name="time_active_days_ago">%d 天前活躍</string>
-    <string name="time_days">%d天 %d小時</string>
-    <string name="time_hours">%d小時 %d分鐘</string>
+    <string name="time_days">%1$d天 %2$d小時</string>
+    <string name="time_hours">%1$d小時 %2$d分鐘</string>
     <string name="time_minutes">%d分鐘</string>
     <string name="time_seconds">%d秒</string>
     
