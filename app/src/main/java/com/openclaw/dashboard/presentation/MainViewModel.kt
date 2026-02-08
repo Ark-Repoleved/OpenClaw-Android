@@ -201,12 +201,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val sessionKey = _currentSessionKey.value ?: return
         
         viewModelScope.launch {
-            // Add optimistic message
+            // Add optimistic user message
+            val runId = java.util.UUID.randomUUID().toString()
             val optimisticMessage = ChatEvent(
+                runId = runId,
                 sessionKey = sessionKey,
-                role = "user",
-                content = message,
-                timestamp = System.currentTimeMillis()
+                seq = 0,
+                state = "final",
+                message = com.openclaw.dashboard.data.model.ChatMessage(
+                    role = "user",
+                    timestamp = System.currentTimeMillis()
+                ),
+                delta = message
             )
             _chatMessages.update { it + optimisticMessage }
             

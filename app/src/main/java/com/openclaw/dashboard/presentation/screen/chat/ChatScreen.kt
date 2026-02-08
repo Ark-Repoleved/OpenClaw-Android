@@ -178,7 +178,33 @@ fun ChatInputBar(
 
 @Composable
 fun ChatBubble(message: ChatEvent) {
-    val isUser = message.role == "user"
+    val isUser = message.message?.role == "user"
+    
+    // Extract text content from message or delta
+    val content = message.delta ?: run {
+        // Try to parse content from message.content (can be string or array)
+        val contentElement = message.message?.content
+        if (contentElement != null) {
+            try {
+                // Check if it's a string
+                if (contentElement.toString().startsWith("\"")) {
+                    contentElement.toString().trim('"')
+                } else {
+                    // It's likely an array of content blocks
+                    val array = contentElement as? kotlinx.serialization.json.JsonArray
+                    array?.mapNotNull { item ->
+                        val obj = item as? kotlinx.serialization.json.JsonObject
+                        val type = obj?.get("type")?.toString()?.trim('"')
+                        if (type == "text") {
+                            obj["text"]?.toString()?.trim('"')
+                        } else null
+                    }?.joinToString("\n") ?: ""
+                }
+            } catch (e: Exception) {
+                contentElement.toString()
+            }
+        } else ""
+    }
     
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -217,7 +243,7 @@ fun ChatBubble(message: ChatEvent) {
             modifier = Modifier.widthIn(max = 280.dp)
         ) {
             Text(
-                text = message.content ?: "",
+                text = content,
                 modifier = Modifier.padding(12.dp),
                 style = MaterialTheme.typography.bodyMedium
             )

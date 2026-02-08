@@ -251,13 +251,29 @@ data class ChatSendParams(
 
 @Serializable
 data class ChatEvent(
+    val runId: String,
     val sessionKey: String,
+    val seq: Int,
+    val state: String,        // "delta", "final", "error"
+    val delta: String? = null,
+    val message: ChatMessage? = null,
+    val errorMessage: String? = null
+)
+
+@Serializable
+data class ChatMessage(
     val role: String,
-    val content: String? = null,
-    val toolCalls: List<JsonElement>? = null,
+    val content: JsonElement? = null,  // Can be string or array
     val timestamp: Long? = null,
-    val messageId: String? = null,
-    @SerialName("type") val eventType: String? = null
+    val stopReason: String? = null,
+    val usage: ChatUsage? = null
+)
+
+@Serializable
+data class ChatUsage(
+    val input: Int? = null,
+    val output: Int? = null,
+    val totalTokens: Int? = null
 )
 
 // ============== Tick & Shutdown ==============
