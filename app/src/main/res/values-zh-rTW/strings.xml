@@ -22,9 +22,11 @@
     <string name="setup_hf_token_tip">提示：HF Token 可在 huggingface.co/settings/tokens 建立</string>
     
     <!-- Navigation -->
+    <string name="nav_setup">設定</string>
     <string name="nav_overview">總覽</string>
     <string name="nav_sessions">對話</string>
     <string name="nav_chat">聊天</string>
+    <string name="nav_config">配置</string>
     <string name="nav_instances">裝置</string>
     
     <!-- Overview Screen -->

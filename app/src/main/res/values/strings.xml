@@ -22,9 +22,11 @@
     <string name="setup_hf_token_tip">Tip: Create HF Token at huggingface.co/settings/tokens</string>
     
     <!-- Navigation -->
+    <string name="nav_setup">Setup</string>
     <string name="nav_overview">Overview</string>
     <string name="nav_sessions">Sessions</string>
     <string name="nav_chat">Chat</string>
+    <string name="nav_config">Config</string>
     <string name="nav_instances">Instances</string>
     
     <!-- Overview Screen -->
