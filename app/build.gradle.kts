@@ -92,6 +92,10 @@ dependencies {
 
     // Splash Screen API
     implementation("androidx.core:core-splashscreen:1.0.1")
+    
+    // Markdown rendering
+    implementation("com.halilibo.compose-richtext:richtext-commonmark:0.17.0")
+    implementation("com.halilibo.compose-richtext:richtext-ui-material3:0.17.0")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")

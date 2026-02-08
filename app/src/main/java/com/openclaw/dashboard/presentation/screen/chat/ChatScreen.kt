@@ -21,9 +21,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.halilibo.richtext.commonmark.Markdown
+import com.halilibo.richtext.ui.material3.RichText
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.presentation.MainViewModel
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -242,11 +245,12 @@ fun ChatBubble(message: ChatEvent) {
             ),
             modifier = Modifier.widthIn(max = 280.dp)
         ) {
-            Text(
-                text = content,
-                modifier = Modifier.padding(12.dp),
-                style = MaterialTheme.typography.bodyMedium
-            )
+            // Use RichText for Markdown rendering
+            RichText(
+                modifier = Modifier.padding(12.dp)
+            ) {
+                Markdown(content = content)
+            }
         }
         
         if (isUser) {
