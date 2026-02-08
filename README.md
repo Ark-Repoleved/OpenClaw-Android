@@ -1,33 +1,27 @@
 # OpenClaw Android Dashboard
 
-OpenClaw 的原生 Android 儀表板應用程式。
+**English** | [繁體中文](README_zh-TW.md)
 
-## 功能
+---
 
-- 連接到您的 OpenClaw Web Dashboard
-- 支援 Hugging Face 私有 Space 認證
-- Sessions 管理與 Token 統計
-- 即時聊天介面
-- 已連線裝置監控
-- Material 3 動態主題
+**OpenClaw Android Dashboard** is a native Android application designed to manage and monitor your OpenClaw instances directly from your mobile device.
 
-## 建置
+## Features
 
-### 本地建置
-```bash
-./gradlew assembleDebug
-```
+- **Seamless Connectivity**: Connect to your OpenClaw Web Dashboard effortlessly.
+- **Secure Authentication**: Supports Hugging Face Private Space authentication for secure access.
+- **Session Management**: View and manage active sessions with real-time token usage statistics.
+- **Live Chat Interface**: Interact with your AI agents directly through a responsive chat interface.
+  - **Real-time Typing Indicator**: Visual feedback when the AI is processing, executing tools, or "thinking".
+  - **Tool Execution Tracking**: Monitor valid tool execution states (start/end/error) directly in the chat.
+- **Instance Monitoring**: Keep track of connected devices and their status.
+- **Modern UI**: Built with Jetpack Compose and Material 3 for a beautiful, dynamic, and responsive user experience.
 
-### GitHub Actions
-專案包含自動化建置流程，推送到 `main` 分支後會自動建置 Debug APK。
+## Usage
 
-## 使用方式
-
-1. 安裝 APK
-2. 輸入您的 Dashboard URL（例如：`https://your-space.hf.space`）
-3. 輸入 Hugging Face Token（私有 Space 必填）
-4. 開始管理您的 AI 代理！
-
-## 授權
-
-MIT License
+1. **Install**: Download and install the APK on your Android device.
+2. **Setup**:
+   - Enter your **Dashboard URL**
+   - Enter your **Gateway Token**
+3. **Connect**: Tap "Connect" to establish a secure connection to your OpenClaw instance.
+4. **Manage**: Start chatting with your agents, view active sessions, and monitor your infrastructure!
