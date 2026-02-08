@@ -106,9 +106,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         val chatEvent = event.event
                         if (chatEvent.sessionKey == _currentSessionKey.value) {
                             // Update typing indicator based on state
+                            // Show typing for delta (streaming) and any processing state
                             when (chatEvent.state) {
-                                "delta" -> _isAiTyping.value = true
                                 "final", "error" -> _isAiTyping.value = false
+                                else -> _isAiTyping.value = true  // delta, processing, etc
                             }
                             
                             // Only process final messages, and dedupe by runId
@@ -298,6 +299,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 delta = message
             )
             _chatMessages.update { it + optimisticMessage }
+            
+            // Show typing indicator immediately after sending
+            _isAiTyping.value = true
             
             gatewayClient.sendChatMessage(sessionKey, message)
         }
