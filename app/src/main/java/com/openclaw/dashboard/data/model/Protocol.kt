@@ -250,6 +250,24 @@ data class ChatSendParams(
 )
 
 @Serializable
+data class ChatHistoryResult(
+    val sessionKey: String,
+    val sessionId: String? = null,
+    val messages: List<HistoryMessage> = emptyList(),
+    val thinkingLevel: String? = null,
+    val verboseLevel: String? = null
+)
+
+@Serializable
+data class HistoryMessage(
+    val role: String,
+    val content: JsonElement? = null,
+    val timestamp: Long? = null,
+    val stopReason: String? = null,
+    val usage: ChatUsage? = null
+)
+
+@Serializable
 data class ChatEvent(
     val runId: String,
     val sessionKey: String,

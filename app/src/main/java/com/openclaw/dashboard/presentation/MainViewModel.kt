@@ -73,8 +73,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             gatewayClient.events.collect { event ->
                 when (event) {
                     is GatewayEvent.Chat -> {
-                        if (event.event.sessionKey == _currentSessionKey.value) {
-                            _chatMessages.update { it + event.event }
+                        val chatEvent = event.event
+                        if (chatEvent.sessionKey == _currentSessionKey.value) {
+                            // Only process final messages, and dedupe by runId
+                            if (chatEvent.state == "final" || chatEvent.state == "error") {
+                                _chatMessages.update { messages ->
+                                    // Remove any existing message with same runId (update instead of dup)
+                                    val filtered = messages.filter { it.runId != chatEvent.runId }
+                                    filtered + chatEvent
+                                }
+                            }
                         }
                     }
                     is GatewayEvent.Shutdown -> {
@@ -192,6 +200,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun selectSession(key: String) {
         _currentSessionKey.value = key
         _chatMessages.value = emptyList()
+        loadChatHistory(key)
+    }
+    
+    /**
+     * Load chat history for a session
+     */
+    private fun loadChatHistory(sessionKey: String) {
+        viewModelScope.launch {
+            gatewayClient.getChatHistory(sessionKey, 100).onSuccess { result ->
+                // Convert history messages to ChatEvent format for display
+                val historyEvents = result.messages.mapIndexed { index, msg ->
+                    ChatEvent(
+                        runId = "history-$index",
+                        sessionKey = sessionKey,
+                        seq = index,
+                        state = "final",
+                        message = com.openclaw.dashboard.data.model.ChatMessage(
+                            role = msg.role,
+                            content = msg.content,
+                            timestamp = msg.timestamp,
+                            stopReason = msg.stopReason,
+                            usage = msg.usage
+                        )
+                    )
+                }
+                _chatMessages.value = historyEvents
+            }
+        }
     }
     
     /**

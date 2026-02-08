@@ -173,6 +173,22 @@ class GatewayClient {
     }
     
     /**
+     * Get chat history for a session
+     */
+    suspend fun getChatHistory(sessionKey: String, limit: Int = 100): Result<ChatHistoryResult> {
+        val params = buildJsonObject {
+            put("sessionKey", sessionKey)
+            put("limit", limit)
+        }
+        
+        return request("chat.history", params).mapCatching { payload ->
+            payload?.let {
+                json.decodeFromJsonElement<ChatHistoryResult>(it)
+            } ?: ChatHistoryResult(sessionKey, null, emptyList())
+        }
+    }
+    
+    /**
      * Get sessions list
      */
     suspend fun getSessions(
