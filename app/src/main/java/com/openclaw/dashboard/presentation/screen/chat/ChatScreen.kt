@@ -262,7 +262,7 @@ fun ChatInputBar(
                 ) {
                     Icon(
                         Icons.Filled.Add,
-                        contentDescription = "附加圖片",
+                        contentDescription = stringResource(R.string.chat_attach_image),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -285,7 +285,7 @@ fun ChatInputBar(
                     onClick = onSend,
                     enabled = enabled && (value.isNotBlank() || attachments.isNotEmpty())
                 ) {
-                    Icon(Icons.Filled.Send, contentDescription = "傳送")
+                    Icon(Icons.Filled.Send, contentDescription = stringResource(R.string.chat_send))
                 }
             }
         }
@@ -312,7 +312,7 @@ fun AttachmentPreview(
         if (bitmap != null) {
             Image(
                 bitmap = bitmap.asImageBitmap(),
-                contentDescription = "附件預覽",
+                contentDescription = stringResource(R.string.chat_attachment_preview),
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(8.dp)),
@@ -347,7 +347,7 @@ fun AttachmentPreview(
         ) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "移除",
+                contentDescription = stringResource(R.string.chat_remove_attachment),
                 modifier = Modifier.size(16.dp),
                 tint = MaterialTheme.colorScheme.onErrorContainer
             )
@@ -595,7 +595,7 @@ fun NoSessionSelected(
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "選擇一個 Session",
+            text = stringResource(R.string.chat_select_a_session),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

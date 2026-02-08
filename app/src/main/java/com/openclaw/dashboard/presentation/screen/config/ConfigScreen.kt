@@ -132,7 +132,7 @@ fun ConfigScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = if (hasChanges) "已修改" else "未修改",
+                                    text = if (hasChanges) stringResource(R.string.config_modified) else stringResource(R.string.config_not_modified),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = if (hasChanges) MaterialTheme.colorScheme.primary 
                                             else MaterialTheme.colorScheme.onSurfaceVariant

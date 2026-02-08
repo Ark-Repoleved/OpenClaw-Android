@@ -38,6 +38,11 @@
     <string name="overview_version">Version</string>
     <string name="overview_connected_clients">Connected Devices</string>
     <string name="overview_active_sessions">Active Sessions</string>
+    <string name="overview_connection_status">Connection Status</string>
+    <string name="overview_system_health">System Health</string>
+    <string name="overview_all_services_ok">All services running normally</string>
+    <string name="overview_services_error">Some services may be unavailable</string>
+    <string name="overview_host">Host</string>
     
     <!-- Sessions Screen -->
     <string name="sessions_title">Sessions</string>
@@ -57,20 +62,44 @@
     <string name="chat_attachment_preview">Attachment preview</string>
     <string name="chat_remove_attachment">Remove</string>
     <string name="chat_no_session">No sessions available</string>
+    <string name="chat_select_a_session">Select a session</string>
     
     <!-- Config Screen -->
     <string name="config_title">Config Editor</string>
     <string name="config_saving">Saving…</string>
+    <string name="config_modified">Modified</string>
+    <string name="config_not_modified">Not modified</string>
+    <string name="config_not_exist">Config does not exist</string>
+    <string name="config_load_failed">Failed to load</string>
+    <string name="config_save_failed">Failed to save</string>
     
     <!-- Instances Screen -->
     <string name="instances_title">Connected Devices</string>
     <string name="instances_empty">No connected devices</string>
+    <string name="instances_connection_time">Connection time:</string>
+    
+    <!-- Time Format -->
+    <string name="time_just_now">Just now</string>
+    <string name="time_minutes_ago">%d min ago</string>
+    <string name="time_hours_ago">%d hours ago</string>
+    <string name="time_days_ago">%d days ago</string>
+    <string name="time_active_just_now">Active just now</string>
+    <string name="time_active_minutes_ago">Active %d min ago</string>
+    <string name="time_active_hours_ago">Active %d hours ago</string>
+    <string name="time_active_days_ago">Active %d days ago</string>
+    <string name="time_days">%d days %d hours</string>
+    <string name="time_hours">%d hours %d min</string>
+    <string name="time_minutes">%d min</string>
+    <string name="time_seconds">%d sec</string>
+    
+    <!-- Connection Errors -->
+    <string name="error_max_reconnect">Unable to reconnect, maximum attempts reached</string>
     
     <!-- Common -->
     <string name="action_cancel">Cancel</string>
     <string name="action_close">Close</string>
-    
-    <!-- Common -->
+    <string name="action_save">Save</string>
+    <string name="action_reload">Reload</string>
     <string name="error_connection_failed">Connection failed</string>
     <string name="error_auth_failed">Authentication failed</string>
     <string name="error_network">Network error</string>

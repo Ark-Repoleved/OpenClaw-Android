@@ -62,7 +62,7 @@ fun OverviewScreen(
                     
                     Icon(
                         imageVector = statusIcon,
-                        contentDescription = "連線狀態",
+                        contentDescription = stringResource(R.string.overview_connection_status),
                         tint = statusColor,
                         modifier = Modifier.padding(end = 8.dp)
                     )
@@ -71,7 +71,7 @@ fun OverviewScreen(
                     IconButton(onClick = { showSettingsDialog = true }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "設定"
+                            contentDescription = stringResource(R.string.action_settings)
                         )
                     }
                 }
@@ -106,7 +106,7 @@ fun OverviewScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatCard(
-                        title = "已連線裝置",
+                        title = stringResource(R.string.overview_connected_clients),
                         value = connectedInstances.size.toString(),
                         icon = Icons.Filled.Devices,
                         modifier = Modifier.weight(1f)
@@ -125,7 +125,7 @@ fun OverviewScreen(
             if (connectedInstances.isNotEmpty()) {
                 item {
                     Text(
-                        text = "已連線裝置",
+                        text = stringResource(R.string.overview_connected_clients),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(top = 8.dp)
@@ -177,12 +177,12 @@ fun HealthStatusCard(isHealthy: Boolean) {
             
             Column {
                 Text(
-                    text = if (isHealthy) "系統健康" else "系統異常",
+                    text = if (isHealthy) stringResource(R.string.overview_system_health) else stringResource(R.string.overview_health_error),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (isHealthy) "所有服務正常運作" else "部分服務可能無法使用",
+                    text = if (isHealthy) stringResource(R.string.overview_all_services_ok) else stringResource(R.string.overview_services_error),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -204,16 +204,16 @@ fun GatewayInfoCard(
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = "Gateway 資訊",
+                text = stringResource(R.string.overview_gateway_info),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            InfoRow(label = "版本", value = version, icon = Icons.Filled.Info)
-            InfoRow(label = "主機", value = host, icon = Icons.Filled.Computer)
-            InfoRow(label = "運行時間", value = uptime, icon = Icons.Filled.Schedule)
+            InfoRow(label = stringResource(R.string.overview_version), value = version, icon = Icons.Filled.Info)
+            InfoRow(label = stringResource(R.string.overview_host), value = host, icon = Icons.Filled.Computer)
+            InfoRow(label = stringResource(R.string.overview_uptime), value = uptime, icon = Icons.Filled.Schedule)
         }
     }
 }

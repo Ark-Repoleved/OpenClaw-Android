@@ -38,6 +38,11 @@
     <string name="overview_version">版本</string>
     <string name="overview_connected_clients">已連線裝置</string>
     <string name="overview_active_sessions">活躍對話</string>
+    <string name="overview_connection_status">連線狀態</string>
+    <string name="overview_system_health">系統健康</string>
+    <string name="overview_all_services_ok">所有服務正常運作</string>
+    <string name="overview_services_error">部分服務可能無法使用</string>
+    <string name="overview_host">主機</string>
     
     <!-- Sessions Screen -->
     <string name="sessions_title">對話</string>
@@ -57,18 +62,44 @@
     <string name="chat_attachment_preview">附件預覽</string>
     <string name="chat_remove_attachment">移除</string>
     <string name="chat_no_session">目前沒有可用的 Session</string>
+    <string name="chat_select_a_session">選擇一個 Session</string>
     
     <!-- Config Screen -->
     <string name="config_title">配置編輯器</string>
     <string name="config_saving">儲存中…</string>
+    <string name="config_modified">已修改</string>
+    <string name="config_not_modified">未修改</string>
+    <string name="config_not_exist">配置不存在</string>
+    <string name="config_load_failed">載入失敗</string>
+    <string name="config_save_failed">儲存失敗</string>
     
     <!-- Instances Screen -->
     <string name="instances_title">已連線裝置</string>
     <string name="instances_empty">目前沒有已連線裝置</string>
+    <string name="instances_connection_time">連線時間:</string>
+    
+    <!-- Time Format -->
+    <string name="time_just_now">剛剛</string>
+    <string name="time_minutes_ago">%d 分鐘前</string>
+    <string name="time_hours_ago">%d 小時前</string>
+    <string name="time_days_ago">%d 天前</string>
+    <string name="time_active_just_now">剛剛活躍</string>
+    <string name="time_active_minutes_ago">%d 分鐘前活躍</string>
+    <string name="time_active_hours_ago">%d 小時前活躍</string>
+    <string name="time_active_days_ago">%d 天前活躍</string>
+    <string name="time_days">%d天 %d小時</string>
+    <string name="time_hours">%d小時 %d分鐘</string>
+    <string name="time_minutes">%d分鐘</string>
+    <string name="time_seconds">%d秒</string>
+    
+    <!-- Connection Errors -->
+    <string name="error_max_reconnect">無法重新連線，已達到最大嘗試次數</string>
     
     <!-- Common -->
     <string name="action_cancel">取消</string>
     <string name="action_close">關閉</string>
+    <string name="action_save">儲存</string>
+    <string name="action_reload">重新載入</string>
     <string name="error_connection_failed">連線失敗</string>
     <string name="error_auth_failed">認證失敗</string>
     <string name="error_network">網路錯誤</string>

@@ -230,7 +230,7 @@ fun InstanceCard(instance: PresenceEntry) {
                 Spacer(modifier = Modifier.height(4.dp))
                 
                 Text(
-                    text = "連線時間: ${formatTimestamp(instance.ts)}",
+                    text = stringResource(R.string.instances_connection_time) + " " + formatTimestamp(instance.ts),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
