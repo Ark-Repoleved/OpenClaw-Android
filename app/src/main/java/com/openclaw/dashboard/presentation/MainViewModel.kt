@@ -79,6 +79,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // AI typing indicator
     private val _isAiTyping = MutableStateFlow(false)
     val isAiTyping: StateFlow<Boolean> = _isAiTyping.asStateFlow()
+    private val _activeRunIds = mutableSetOf<String>()  // Track active runIds
     
     // Connected instances (from presence)
     val connectedInstances: StateFlow<List<PresenceEntry>> = snapshot
@@ -105,11 +106,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     is GatewayEvent.Chat -> {
                         val chatEvent = event.event
                         if (chatEvent.sessionKey == _currentSessionKey.value) {
-                            // Update typing indicator based on state
-                            // Show typing for delta (streaming) and any processing state
+                            // Update typing indicator by tracking active runIds
+                            // Any non-final state means AI is still processing
                             when (chatEvent.state) {
-                                "final", "error" -> _isAiTyping.value = false
-                                else -> _isAiTyping.value = true  // delta, processing, etc
+                                "final", "error" -> {
+                                    _activeRunIds.remove(chatEvent.runId)
+                                    _isAiTyping.value = _activeRunIds.isNotEmpty()
+                                }
+                                else -> {
+                                    _activeRunIds.add(chatEvent.runId)
+                                    _isAiTyping.value = true
+                                }
                             }
                             
                             // Only process final messages, and dedupe by runId
