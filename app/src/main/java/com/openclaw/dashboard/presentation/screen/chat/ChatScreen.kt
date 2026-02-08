@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.openclaw.dashboard.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.res.stringResource
@@ -109,7 +111,7 @@ fun ChatScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text("聊天")
+                        Text(stringResource(R.string.chat_title))
                         currentSessionKey?.let { key ->
                             Text(
                                 text = key,
@@ -121,7 +123,7 @@ fun ChatScreen(
                 },
                 actions = {
                     IconButton(onClick = { showSessionPicker = true }) {
-                        Icon(Icons.Filled.SwapHoriz, contentDescription = "切換 Session")
+                        Icon(Icons.Filled.SwapHoriz, contentDescription = stringResource(R.string.chat_select_session))
                     }
                 }
             )
@@ -603,7 +605,7 @@ fun NoSessionSelected(
         FilledTonalButton(onClick = onSelectSession) {
             Icon(Icons.Filled.List, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("選擇 Session")
+            Text(stringResource(R.string.chat_select_session))
         }
     }
 }
@@ -624,13 +626,13 @@ fun EmptyChatState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "開始對話",
+            text = stringResource(R.string.chat_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
         Text(
-            text = "在下方輸入訊息開始聊天",
+            text = stringResource(R.string.chat_input_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )
@@ -646,10 +648,10 @@ fun SessionPickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("選擇 Session") },
+        title = { Text(stringResource(R.string.chat_select_session)) },
         text = {
             if (sessions.isEmpty()) {
-                Text("目前沒有可用的 Session")
+                Text(stringResource(R.string.chat_no_session))
             } else {
                 LazyColumn {
                     items(sessions) { (key, title) ->
@@ -670,7 +672,7 @@ fun SessionPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("關閉")
+                Text(stringResource(R.string.action_close))
             }
         }
     )

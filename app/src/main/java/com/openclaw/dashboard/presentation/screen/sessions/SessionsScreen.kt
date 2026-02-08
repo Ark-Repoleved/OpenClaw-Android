@@ -12,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.model.SessionInfo
 import com.openclaw.dashboard.presentation.MainViewModel
 import java.text.SimpleDateFormat
@@ -34,10 +36,10 @@ fun SessionsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sessions") },
+                title = { Text(stringResource(R.string.sessions_title)) },
                 actions = {
                     IconButton(onClick = { viewModel.loadSessions() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "重新整理")
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.action_retry))
                     }
                 }
             )
@@ -106,13 +108,13 @@ fun EmptySessionsState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "目前沒有 Sessions",
+            text = stringResource(R.string.sessions_empty),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
         Text(
-            text = "開始一個新對話來建立 Session",
+            text = stringResource(R.string.sessions_empty),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )
@@ -157,7 +159,7 @@ fun SessionCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = "刪除",
+                        contentDescription = stringResource(R.string.sessions_delete),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(20.dp)
                     )
@@ -246,8 +248,8 @@ fun SessionCard(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("刪除 Session") },
-            text = { Text("確定要刪除這個 Session 嗎？此操作無法復原。") },
+            title = { Text(stringResource(R.string.sessions_delete_title)) },
+            text = { Text(stringResource(R.string.sessions_delete_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -258,12 +260,12 @@ fun SessionCard(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("刪除")
+                    Text(stringResource(R.string.sessions_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("取消")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )

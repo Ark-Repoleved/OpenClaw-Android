@@ -15,6 +15,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.openclaw.dashboard.R
 import com.openclaw.dashboard.presentation.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -48,14 +50,14 @@ fun ConfigScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("配置編輯器") },
+                title = { Text(stringResource(R.string.config_title)) },
                 actions = {
                     // Reload button
                     IconButton(
                         onClick = { viewModel.loadConfig() },
                         enabled = configState !is ConfigUiState.Loading
                     ) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "重新載入")
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.action_retry))
                     }
                     
                     // Save button
@@ -69,7 +71,7 @@ fun ConfigScreen(
                     ) {
                         Icon(
                             Icons.Filled.Save,
-                            contentDescription = "儲存",
+                            contentDescription = stringResource(R.string.chat_send),
                             tint = if (hasChanges) MaterialTheme.colorScheme.primary 
                                    else MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -110,7 +112,7 @@ fun ConfigScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         FilledTonalButton(onClick = { viewModel.loadConfig() }) {
-                            Text("重試")
+                            Text(stringResource(R.string.action_retry))
                         }
                     }
                 }
@@ -180,7 +182,7 @@ fun ConfigScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text("儲存中...")
+                            Text(stringResource(R.string.config_saving))
                         }
                     }
                 }

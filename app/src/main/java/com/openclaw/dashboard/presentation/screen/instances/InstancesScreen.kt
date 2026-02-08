@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.model.PresenceEntry
 import com.openclaw.dashboard.presentation.MainViewModel
 import java.text.SimpleDateFormat
@@ -26,7 +28,7 @@ fun InstancesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("已連線裝置") },
+                title = { Text(stringResource(R.string.instances_title)) },
                 actions = {
                     Badge(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -84,13 +86,13 @@ fun EmptyInstancesState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "目前沒有已連線裝置",
+            text = stringResource(R.string.instances_empty),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
         Text(
-            text = "其他裝置連線後會顯示在這裡",
+            text = stringResource(R.string.instances_empty),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )

@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.remote.ConnectionState
 import com.openclaw.dashboard.presentation.MainViewModel
 import com.openclaw.dashboard.presentation.components.SettingsDialog
@@ -47,7 +49,7 @@ fun OverviewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("總覽") },
+                title = { Text(stringResource(R.string.nav_overview)) },
                 actions = {
                     // Connection status indicator
                     val (statusColor, statusIcon) = when (connectionState) {

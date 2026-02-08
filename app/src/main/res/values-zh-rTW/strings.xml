@@ -45,6 +45,8 @@
     <string name="sessions_delete">刪除</string>
     <string name="sessions_reset">重置</string>
     <string name="sessions_tokens_used">已使用 Token</string>
+    <string name="sessions_delete_title">刪除 Session</string>
+    <string name="sessions_delete_message">確定要刪除這個 Session 嗎？此操作無法復原。</string>
     
     <!-- Chat Screen -->
     <string name="chat_title">聊天</string>
@@ -54,12 +56,19 @@
     <string name="chat_attach_image">附加圖片</string>
     <string name="chat_attachment_preview">附件預覽</string>
     <string name="chat_remove_attachment">移除</string>
+    <string name="chat_no_session">目前沒有可用的 Session</string>
+    
+    <!-- Config Screen -->
+    <string name="config_title">配置編輯器</string>
+    <string name="config_saving">儲存中…</string>
     
     <!-- Instances Screen -->
     <string name="instances_title">已連線裝置</string>
     <string name="instances_empty">目前沒有已連線裝置</string>
     
     <!-- Common -->
+    <string name="action_cancel">取消</string>
+    <string name="action_close">關閉</string>
     <string name="error_connection_failed">連線失敗</string>
     <string name="error_auth_failed">認證失敗</string>
     <string name="error_network">網路錯誤</string>
