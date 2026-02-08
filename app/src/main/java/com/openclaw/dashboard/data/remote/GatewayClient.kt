@@ -156,7 +156,7 @@ class GatewayClient {
         
         if (reconnectAttempts >= RECONNECT_MAX_ATTEMPTS) {
             Log.e(TAG, "Max reconnect attempts reached")
-            _connectionState.value = ConnectionState.Error("無法重新連線，已達到最大嘗試次數")
+            _connectionState.value = ConnectionState.Error("MAX_RECONNECT_ATTEMPTS")
             return
         }
         

@@ -272,15 +272,16 @@ fun SessionCard(
     }
 }
 
+@Composable
 private fun formatTimestamp(timestamp: Long): String {
     val now = System.currentTimeMillis()
     val diff = now - timestamp
     
     return when {
-        diff < 60_000 -> "剛剛"
-        diff < 3600_000 -> "${diff / 60_000} 分鐘前"
-        diff < 86400_000 -> "${diff / 3600_000} 小時前"
-        diff < 604800_000 -> "${diff / 86400_000} 天前"
+        diff < 60_000 -> stringResource(R.string.time_just_now)
+        diff < 3600_000 -> stringResource(R.string.time_minutes_ago, (diff / 60_000).toInt())
+        diff < 86400_000 -> stringResource(R.string.time_hours_ago, (diff / 3600_000).toInt())
+        diff < 604800_000 -> stringResource(R.string.time_days_ago, (diff / 86400_000).toInt())
         else -> {
             val sdf = SimpleDateFormat("MM/dd", Locale.getDefault())
             sdf.format(Date(timestamp))

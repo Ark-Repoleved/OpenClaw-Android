@@ -251,12 +251,13 @@ private fun getPlatformIcon(platform: String?): androidx.compose.ui.graphics.vec
     }
 }
 
+@Composable
 private fun formatLastInput(seconds: Int): String {
     return when {
-        seconds < 60 -> "剛剛活躍"
-        seconds < 3600 -> "${seconds / 60} 分鐘前活躍"
-        seconds < 86400 -> "${seconds / 3600} 小時前活躍"
-        else -> "${seconds / 86400} 天前活躍"
+        seconds < 60 -> stringResource(R.string.time_active_just_now)
+        seconds < 3600 -> stringResource(R.string.time_active_minutes_ago, seconds / 60)
+        seconds < 86400 -> stringResource(R.string.time_active_hours_ago, seconds / 3600)
+        else -> stringResource(R.string.time_active_days_ago, seconds / 86400)
     }
 }
 

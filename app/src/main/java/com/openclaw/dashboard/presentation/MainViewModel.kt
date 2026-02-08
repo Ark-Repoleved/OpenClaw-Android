@@ -13,6 +13,7 @@ import com.openclaw.dashboard.data.remote.GatewayClient
 import com.openclaw.dashboard.data.remote.GatewayEvent
 import com.openclaw.dashboard.data.repository.SettingsRepository
 import com.openclaw.dashboard.data.repository.ThemeMode
+import com.openclaw.dashboard.R
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -399,12 +400,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                             hash = snapshot.hash
                         )
                     } else {
-                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error("配置不存在")
+                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error(getString(R.string.config_not_exist))
                     }
                 }
                 .onFailure { e ->
                     _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error(
-                        e.message ?: "載入失敗"
+                        e.message ?: getString(R.string.config_load_failed)
                     )
                 }
         }
@@ -421,12 +422,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     if (result.ok) {
                         _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Saved
                     } else {
-                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error("儲存失敗")
+                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error(getString(R.string.config_save_failed))
                     }
                 }
                 .onFailure { e ->
                     _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error(
-                        e.message ?: "儲存失敗"
+                        e.message ?: getString(R.string.config_save_failed)
                     )
                 }
         }
@@ -439,11 +440,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val days = hours / 24
         
         return when {
-            days > 0 -> "${days}天 ${hours % 24}小時"
-            hours > 0 -> "${hours}小時 ${minutes % 60}分鐘"
-            minutes > 0 -> "${minutes}分鐘"
-            else -> "${seconds}秒"
+            days > 0 -> getString(R.string.time_days, days.toInt(), (hours % 24).toInt())
+            hours > 0 -> getString(R.string.time_hours, hours.toInt(), (minutes % 60).toInt())
+            minutes > 0 -> getString(R.string.time_minutes, minutes.toInt())
+            else -> getString(R.string.time_seconds, seconds.toInt())
         }
+    }
+    
+    private fun getString(resId: Int, vararg args: Any): String {
+        return getApplication<Application>().getString(resId, *args)
     }
 }
 
