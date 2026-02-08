@@ -36,6 +36,8 @@ fun OpenClawDashboardApp(
     val startDestination = if (isConfigured) Screen.Overview.route else Screen.Setup.route
     
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (isConfigured) {
                 NavigationBar {
@@ -72,7 +74,9 @@ fun OpenClawDashboardApp(
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             composable(Screen.Setup.route) {
                 SetupScreen(
@@ -107,4 +111,3 @@ fun OpenClawDashboardApp(
         }
     }
 }
-
