@@ -76,6 +76,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _currentSessionKey = MutableStateFlow<String?>(null)
     val currentSessionKey: StateFlow<String?> = _currentSessionKey.asStateFlow()
     
+    // AI typing indicator
+    private val _isAiTyping = MutableStateFlow(false)
+    val isAiTyping: StateFlow<Boolean> = _isAiTyping.asStateFlow()
+    
     // Connected instances (from presence)
     val connectedInstances: StateFlow<List<PresenceEntry>> = snapshot
         .map { it?.presence ?: emptyList() }
@@ -101,6 +105,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     is GatewayEvent.Chat -> {
                         val chatEvent = event.event
                         if (chatEvent.sessionKey == _currentSessionKey.value) {
+                            // Update typing indicator based on state
+                            when (chatEvent.state) {
+                                "delta" -> _isAiTyping.value = true
+                                "final", "error" -> _isAiTyping.value = false
+                            }
+                            
                             // Only process final messages, and dedupe by runId
                             if (chatEvent.state == "final" || chatEvent.state == "error") {
                                 _chatMessages.update { messages ->

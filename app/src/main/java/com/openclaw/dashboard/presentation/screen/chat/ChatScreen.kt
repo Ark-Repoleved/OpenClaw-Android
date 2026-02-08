@@ -1,6 +1,7 @@
 package com.openclaw.dashboard.presentation.screen.chat
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +38,7 @@ fun ChatScreen(
     val sessions by viewModel.sessions.collectAsState()
     val currentSessionKey by viewModel.currentSessionKey.collectAsState()
     val messages by viewModel.chatMessages.collectAsState()
+    val isAiTyping by viewModel.isAiTyping.collectAsState()
     
     var messageText by remember { mutableStateOf("") }
     var showSessionPicker by remember { mutableStateOf(false) }
@@ -127,6 +129,13 @@ fun ChatScreen(
                         items(filteredMessages) { message ->
                             ChatBubble(message = message)
                         }
+                        
+                        // Show typing indicator when AI is responding
+                        if (isAiTyping) {
+                            item {
+                                TypingIndicator()
+                            }
+                        }
                     }
                 }
             }
@@ -182,6 +191,75 @@ fun ChatInputBar(
                 enabled = enabled && value.isNotBlank()
             ) {
                 Icon(Icons.Filled.Send, contentDescription = "傳送")
+            }
+        }
+    }
+}
+
+/**
+ * Typing indicator shown when AI is responding
+ */
+@Composable
+fun TypingIndicator() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        // AI avatar
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.SmartToy,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        
+        // Typing bubble
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = RoundedCornerShape(
+                topStart = 16.dp,
+                topEnd = 16.dp,
+                bottomStart = 4.dp,
+                bottomEnd = 16.dp
+            )
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Animated dots
+                val infiniteTransition = rememberInfiniteTransition(label = "typing")
+                repeat(3) { index ->
+                    val alpha by infiniteTransition.animateFloat(
+                        initialValue = 0.3f,
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(600),
+                            repeatMode = RepeatMode.Reverse,
+                            initialStartOffset = StartOffset(index * 200)
+                        ),
+                        label = "dot$index"
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha)
+                            )
+                    )
+                }
             }
         }
     }
