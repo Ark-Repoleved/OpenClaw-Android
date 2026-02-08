@@ -116,9 +116,6 @@ dependencies {
     implementation("io.noties.markwon:ext-tables:$markwonVersion")
     implementation("io.noties.markwon:ext-tasklist:$markwonVersion")
     implementation("io.noties.markwon:linkify:$markwonVersion")
-    implementation("io.noties.markwon:syntax-highlight:$markwonVersion")
-    implementation("io.noties:prism4j:2.0.0")
-    annotationProcessor("io.noties:prism4j-bundler:2.0.0")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
