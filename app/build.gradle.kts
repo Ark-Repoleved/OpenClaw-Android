@@ -94,8 +94,8 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     
     // Markdown rendering
-    implementation("com.halilibo.compose-richtext:richtext-commonmark:0.17.0")
-    implementation("com.halilibo.compose-richtext:richtext-ui-material3:0.17.0")
+    implementation("com.halilibo.compose-richtext:richtext-commonmark:1.0.0-alpha01")
+    implementation("com.halilibo.compose-richtext:richtext-ui-material3:1.0.0-alpha01")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
