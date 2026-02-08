@@ -258,7 +258,18 @@ class GatewayClient {
             auth = authParams
         )
         
-        val frameJson = json.encodeToString(connectParams)
+        // Wrap in hello frame with type field
+        val helloFrame = buildJsonObject {
+            put("type", "hello")
+            put("minProtocol", connectParams.minProtocol)
+            put("maxProtocol", connectParams.maxProtocol)
+            put("client", json.encodeToJsonElement(clientInfo))
+            connectParams.caps?.let { put("caps", json.encodeToJsonElement(it)) }
+            authParams?.let { put("auth", json.encodeToJsonElement(it)) }
+        }
+        
+        val frameJson = json.encodeToString(helloFrame)
+        Log.d(TAG, "Sending hello frame: $frameJson")
         webSocket?.send(frameJson)
     }
     
