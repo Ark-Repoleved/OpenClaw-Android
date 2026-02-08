@@ -275,7 +275,8 @@ data class ChatEvent(
     val state: String,        // "delta", "final", "error"
     val delta: String? = null,
     val message: ChatMessage? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val attachments: List<ChatAttachment>? = null
 )
 
 @Serializable

@@ -374,7 +374,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     role = "user",
                     timestamp = System.currentTimeMillis()
                 ),
-                delta = finalMessage
+                delta = finalMessage,
+                attachments = attachments
             )
             _chatMessages.update { it + optimisticMessage }
             
