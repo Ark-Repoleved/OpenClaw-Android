@@ -33,9 +33,6 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Clean project
-        run: ./gradlew clean
-
       - name: Build Signed Release APK
         run: ./gradlew assembleRelease
         env:
