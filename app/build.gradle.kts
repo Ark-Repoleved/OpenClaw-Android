@@ -109,11 +109,16 @@ dependencies {
     // Splash Screen API
     implementation("androidx.core:core-splashscreen:1.0.1")
     
-    // Markdown rendering - complete support
-    val richtextVersion = "1.0.0-alpha01"
-    implementation("com.halilibo.compose-richtext:richtext-commonmark:$richtextVersion")
-    implementation("com.halilibo.compose-richtext:richtext-ui-material3:$richtextVersion")
-    implementation("com.halilibo.compose-richtext:richtext-ui:$richtextVersion")
+    // Markdown rendering - Markwon with full GFM support
+    val markwonVersion = "4.6.2"
+    implementation("io.noties.markwon:core:$markwonVersion")
+    implementation("io.noties.markwon:ext-strikethrough:$markwonVersion")
+    implementation("io.noties.markwon:ext-tables:$markwonVersion")
+    implementation("io.noties.markwon:ext-tasklist:$markwonVersion")
+    implementation("io.noties.markwon:linkify:$markwonVersion")
+    implementation("io.noties.markwon:syntax-highlight:$markwonVersion")
+    implementation("io.noties:prism4j:2.0.0")
+    annotationProcessor("io.noties:prism4j-bundler:2.0.0")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
