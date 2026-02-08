@@ -189,6 +189,33 @@ class GatewayClient {
     }
     
     /**
+     * Get raw config
+     */
+    suspend fun getConfig(): Result<ConfigSnapshot> {
+        return request("config.get", buildJsonObject {}).mapCatching { payload ->
+            payload?.let {
+                json.decodeFromJsonElement<ConfigSnapshot>(it)
+            } ?: ConfigSnapshot(false, false, null, null, null)
+        }
+    }
+    
+    /**
+     * Set raw config
+     */
+    suspend fun setConfig(raw: String, baseHash: String): Result<ConfigSetResult> {
+        val params = buildJsonObject {
+            put("raw", raw)
+            put("baseHash", baseHash)
+        }
+        
+        return request("config.set", params).mapCatching { payload ->
+            payload?.let {
+                json.decodeFromJsonElement<ConfigSetResult>(it)
+            } ?: ConfigSetResult(false, null)
+        }
+    }
+    
+    /**
      * Get sessions list
      */
     suspend fun getSessions(

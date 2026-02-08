@@ -306,3 +306,22 @@ data class ShutdownEvent(
     val reason: String,
     val restartExpectedMs: Int? = null
 )
+
+// ============== Config ==============
+
+@Serializable
+data class ConfigSnapshot(
+    val exists: Boolean,
+    val valid: Boolean,
+    val raw: String? = null,
+    val hash: String? = null,
+    val config: JsonElement? = null
+)
+
+@Serializable
+data class ConfigSetResult(
+    val ok: Boolean,
+    val path: String? = null,
+    val config: JsonElement? = null
+)
+

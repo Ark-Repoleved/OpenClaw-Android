@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.openclaw.dashboard.presentation.navigation.Screen
 import com.openclaw.dashboard.presentation.screen.chat.ChatScreen
+import com.openclaw.dashboard.presentation.screen.config.ConfigScreen
 import com.openclaw.dashboard.presentation.screen.instances.InstancesScreen
 import com.openclaw.dashboard.presentation.screen.overview.OverviewScreen
 import com.openclaw.dashboard.presentation.screen.sessions.SessionsScreen
@@ -96,9 +97,14 @@ fun OpenClawDashboardApp(
                 ChatScreen(viewModel = mainViewModel)
             }
             
+            composable(Screen.Config.route) {
+                ConfigScreen(viewModel = mainViewModel)
+            }
+            
             composable(Screen.Instances.route) {
                 InstancesScreen(viewModel = mainViewModel)
             }
         }
     }
 }
+

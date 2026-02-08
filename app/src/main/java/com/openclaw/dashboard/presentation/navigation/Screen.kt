@@ -42,6 +42,13 @@ sealed class Screen(
         unselectedIcon = Icons.Outlined.Chat
     )
     
+    data object Config : Screen(
+        route = "config",
+        title = "配置",
+        selectedIcon = Icons.Filled.Code,
+        unselectedIcon = Icons.Outlined.Code
+    )
+    
     data object Instances : Screen(
         route = "instances",
         title = "裝置",
@@ -50,6 +57,7 @@ sealed class Screen(
     )
     
     companion object {
-        val bottomNavItems = listOf(Overview, Sessions, Chat, Instances)
+        val bottomNavItems = listOf(Overview, Sessions, Chat, Config, Instances)
     }
 }
+

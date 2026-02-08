@@ -266,6 +266,60 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     
+    // ============== Config ==============
+    
+    private val _configState = MutableStateFlow<com.openclaw.dashboard.presentation.screen.config.ConfigUiState>(
+        com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Loading
+    )
+    val configState: StateFlow<com.openclaw.dashboard.presentation.screen.config.ConfigUiState> = _configState.asStateFlow()
+    
+    /**
+     * Load config from gateway
+     */
+    fun loadConfig() {
+        viewModelScope.launch {
+            _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Loading
+            gatewayClient.getConfig()
+                .onSuccess { snapshot ->
+                    if (snapshot.exists && snapshot.raw != null) {
+                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Loaded(
+                            raw = snapshot.raw,
+                            hash = snapshot.hash
+                        )
+                    } else {
+                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error("配置不存在")
+                    }
+                }
+                .onFailure { e ->
+                    _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error(
+                        e.message ?: "載入失敗"
+                    )
+                }
+        }
+    }
+    
+    /**
+     * Save config to gateway
+     */
+    fun saveConfig(raw: String, baseHash: String) {
+        viewModelScope.launch {
+            _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Saving
+            gatewayClient.setConfig(raw, baseHash)
+                .onSuccess { result ->
+                    if (result.ok) {
+                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Saved
+                    } else {
+                        _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error("儲存失敗")
+                    }
+                }
+                .onFailure { e ->
+                    _configState.value = com.openclaw.dashboard.presentation.screen.config.ConfigUiState.Error(
+                        e.message ?: "儲存失敗"
+                    )
+                }
+        }
+    }
+    
     private fun formatUptime(uptimeMs: Long): String {
         val seconds = uptimeMs / 1000
         val minutes = seconds / 60
@@ -280,3 +334,4 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
+
