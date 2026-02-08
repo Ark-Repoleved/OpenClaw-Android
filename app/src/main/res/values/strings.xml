@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OpenClaw Dashboard</string>
+    
+    <!-- Setup Screen -->
+    <string name="setup_title">連線到 OpenClaw</string>
+    <string name="setup_subtitle">輸入您的 Dashboard URL 來開始</string>
+    <string name="setup_url_label">Dashboard URL</string>
+    <string name="setup_url_hint">https://your-space.hf.space</string>
+    <string name="setup_hf_token_label">Hugging Face Token</string>
+    <string name="setup_hf_token_hint">hf_xxxxx（私有 Space 必填）</string>
+    <string name="setup_gateway_token_label">Gateway Token（選填）</string>
+    <string name="setup_gateway_password_label">Gateway Password（選填）</string>
+    <string name="setup_connect">連線</string>
+    <string name="setup_connecting">連線中…</string>
+    <string name="setup_test_connection">測試連線</string>
+    
+    <!-- Navigation -->
+    <string name="nav_overview">總覽</string>
+    <string name="nav_sessions">Sessions</string>
+    <string name="nav_chat">聊天</string>
+    <string name="nav_instances">裝置</string>
+    
+    <!-- Overview Screen -->
+    <string name="overview_health">系統狀態</string>
+    <string name="overview_health_ok">健康</string>
+    <string name="overview_health_error">異常</string>
+    <string name="overview_gateway_info">Gateway 資訊</string>
+    <string name="overview_uptime">運行時間</string>
+    <string name="overview_version">版本</string>
+    <string name="overview_connected_clients">已連線裝置</string>
+    <string name="overview_active_sessions">活躍 Sessions</string>
+    
+    <!-- Sessions Screen -->
+    <string name="sessions_title">Sessions</string>
+    <string name="sessions_empty">目前沒有 Sessions</string>
+    <string name="sessions_delete">刪除</string>
+    <string name="sessions_reset">重置</string>
+    <string name="sessions_tokens_used">已使用 Token</string>
+    
+    <!-- Chat Screen -->
+    <string name="chat_title">聊天</string>
+    <string name="chat_input_hint">輸入訊息…</string>
+    <string name="chat_send">傳送</string>
+    <string name="chat_select_session">選擇 Session</string>
+    
+    <!-- Instances Screen -->
+    <string name="instances_title">已連線裝置</string>
+    <string name="instances_empty">目前沒有已連線裝置</string>
+    
+    <!-- Common -->
+    <string name="error_connection_failed">連線失敗</string>
+    <string name="error_auth_failed">認證失敗</string>
+    <string name="error_network">網路錯誤</string>
+    <string name="action_retry">重試</string>
+    <string name="action_disconnect">斷線</string>
+    <string name="action_settings">設定</string>
+    <string name="loading">載入中…</string>
+</resources>

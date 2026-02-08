@@ -1,0 +1,26 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+
+# Ignore local.properties
+local.properties
+
+# Ignore IDE files
+.idea
+*.iml
+
+# Ignore Android Studio captures folder
+captures/
+
+# Ignore Android Studio generated files
+.externalNativeBuild/
+.cxx/
+
+# Ignore keystore files
+*.jks
+*.keystore
+
+# Ignore debug/release signing files
+signing.properties

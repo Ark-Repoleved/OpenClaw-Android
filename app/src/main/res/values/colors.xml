@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Brand Colors (OpenClaw Red) -->
+    <color name="primary">#E53935</color>
+    <color name="primary_variant">#C62828</color>
+    <color name="on_primary">#FFFFFF</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#FF7043</color>
+    <color name="secondary_variant">#F4511E</color>
+    <color name="on_secondary">#FFFFFF</color>
+    
+    <!-- Surface Colors (Light) -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_background">#1C1B1F</color>
+    <color name="on_surface">#1C1B1F</color>
+    
+    <!-- Error Colors -->
+    <color name="error">#B00020</color>
+    <color name="on_error">#FFFFFF</color>
+    
+    <!-- Status Colors -->
+    <color name="status_ok">#4CAF50</color>
+    <color name="status_warning">#FF9800</color>
+    <color name="status_error">#F44336</color>
+    
+    <!-- Splash Screen -->
+    <color name="splash_background">#E53935</color>
+</resources>

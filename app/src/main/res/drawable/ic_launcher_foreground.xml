@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- OpenClaw Icon - Stylized Claw -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54">
+        <!-- Central dot -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0"/>
+        <!-- Top claw -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:strokeWidth="3"
+            android:strokeColor="#FFFFFF"
+            android:pathData="M54,30 Q54,44 54,46"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,26 L50,34 L58,34 Z"/>
+        <!-- Bottom left claw -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M34,68 L40,60 L46,66 Z"/>
+        <!-- Bottom right claw -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M74,68 L68,60 L62,66 Z"/>
+        <!-- Outer ring -->
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeWidth="3"
+            android:strokeColor="#FFFFFF"
+            android:pathData="M54,54m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0"/>
+    </group>
+</vector>
