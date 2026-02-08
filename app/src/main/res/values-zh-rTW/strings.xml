@@ -66,6 +66,16 @@
     <string name="action_settings">設定</string>
     <string name="loading">載入中…</string>
     
+    <!-- Settings Dialog -->
+    <string name="settings_title">設定</string>
+    <string name="settings_theme">主題</string>
+    <string name="theme_system">跟隨系統</string>
+    <string name="theme_light">淺色模式</string>
+    <string name="theme_dark">深色模式</string>
+    <string name="settings_dynamic_color">動態色彩</string>
+    <string name="settings_dynamic_color_desc">使用壁紙色彩</string>
+    <string name="settings_done">完成</string>
+    
     <!-- Language -->
     <string name="language">語言</string>
     <string name="language_english">English</string>
