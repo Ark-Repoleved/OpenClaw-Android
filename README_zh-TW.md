@@ -1,4 +1,4 @@
-[![GitHub All Releases](https://img.shields.io/github/downloads/Ark-Repoleved/openclaw-android/total)](https://github.com/Ark-Repoleved/openclaw-android/releases) [![GitHub release (latest by date)](https://img.shields.io/github/downloads/Ark-Repoleved/openclaw-android/latest/total)](https://github.com/Ark-Repoleved/openclaw-android/releases/latest)
+[![GitHub All Releases](https://img.shields.io/github/downloads/Ark-Repoleved/OpenClaw-Android/total)](https://github.com/Ark-Repoleved/OpenClaw-Android/releases) [![GitHub release (latest by date)](https://img.shields.io/github/downloads/Ark-Repoleved/OpenClaw-Android/latest/total)](https://github.com/Ark-Repoleved/OpenClaw-Android/releases/latest)
 # OpenClaw Android Dashboard
 
 [English](README.md) | **繁體中文**
