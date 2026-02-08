@@ -504,8 +504,16 @@ fun ChatBubble(message: ChatEvent) {
         processedContent
     }
     
-    // Don't render empty messages
-    if (content.isBlank()) {
+    // Hide "[Image]" or "[n Images]" if there are attachments
+    val displayContent = if (!message.attachments.isNullOrEmpty() && 
+        (content == "[Image]" || content.matches(Regex("\\[\\d+ Images\\]")))) {
+        ""
+    } else {
+        content
+    }
+    
+    // Don't render empty messages (unless there are attachments)
+    if (displayContent.isBlank() && message.attachments.isNullOrEmpty()) {
         return
     }
     
@@ -532,26 +540,59 @@ fun ChatBubble(message: ChatEvent) {
             Spacer(modifier = Modifier.width(8.dp))
         }
         
-        Surface(
-            color = if (isUser) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant
-            },
-            shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = if (isUser) 16.dp else 4.dp,
-                bottomEnd = if (isUser) 4.dp else 16.dp
-            ),
+        Column(
+            horizontalAlignment = if (isUser) Alignment.End else Alignment.Start,
             modifier = Modifier.widthIn(max = 320.dp)
         ) {
-            // Use Markwon for full GFM Markdown support
-            MarkdownText(
-                markdown = content,
-                modifier = Modifier.padding(12.dp),
-                isUserMessage = isUser
-            )
+            // Render attachments if any
+            if (!message.attachments.isNullOrEmpty()) {
+                message.attachments.forEach { attachment ->
+                    val bitmap = remember(attachment.content) {
+                        try {
+                            val bytes = Base64.decode(attachment.content, Base64.DEFAULT)
+                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    }
+
+                    if (bitmap != null) {
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = stringResource(R.string.chat_attachment_preview),
+                            modifier = Modifier
+                                .padding(bottom = 4.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .heightIn(max = 200.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                }
+            }
+            
+            // Render text content if not empty
+            if (displayContent.isNotBlank()) {
+                Surface(
+                    color = if (isUser) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = if (isUser) 16.dp else 4.dp,
+                        bottomEnd = if (isUser) 4.dp else 16.dp
+                    )
+                ) {
+                    // Use Markwon for full GFM Markdown support
+                    MarkdownText(
+                        markdown = displayContent,
+                        modifier = Modifier.padding(12.dp),
+                        isUserMessage = isUser
+                    )
+                }
+            }
         }
         
         if (isUser) {

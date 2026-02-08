@@ -318,6 +318,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val sessionKey = _currentSessionKey.value ?: return
         val attachments = _chatAttachments.value.takeIf { it.isNotEmpty() }
         
+        // If message is empty but attachments exist, send a generic label to satisfy non-empty constraints
+        val finalMessage = if (message.isBlank() && !attachments.isNullOrEmpty()) {
+            if (attachments.size == 1) "[Image]" else "[${attachments.size} Images]"
+        } else {
+            message
+        }
+        
         viewModelScope.launch {
             // Add optimistic user message
             val runId = java.util.UUID.randomUUID().toString()
@@ -330,14 +337,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     role = "user",
                     timestamp = System.currentTimeMillis()
                 ),
-                delta = message
+                delta = finalMessage,
+                attachments = attachments
             )
             _chatMessages.update { it + optimisticMessage }
             
             // Clear attachments before sending
             _chatAttachments.value = emptyList()
             
-            gatewayClient.sendChatMessage(sessionKey, message, attachments)
+            gatewayClient.sendChatMessage(sessionKey, finalMessage, attachments)
         }
     }
     
