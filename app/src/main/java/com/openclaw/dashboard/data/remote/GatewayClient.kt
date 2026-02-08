@@ -162,9 +162,11 @@ class GatewayClient {
      * Send chat message
      */
     suspend fun sendChatMessage(sessionKey: String, message: String): Result<Unit> {
+        val idempotencyKey = UUID.randomUUID().toString()
         val params = buildJsonObject {
             put("sessionKey", sessionKey)
             put("message", message)
+            put("idempotencyKey", idempotencyKey)
         }
         
         return request("chat.send", params).map { }
