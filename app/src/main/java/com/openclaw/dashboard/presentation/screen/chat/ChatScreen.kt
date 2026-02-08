@@ -130,7 +130,7 @@ fun ChatScreen(
                     LazyColumn(
                         state = listState,
                         contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(filteredMessages) { message ->
                             ChatBubble(message = message)
