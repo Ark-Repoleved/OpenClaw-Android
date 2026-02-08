@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base Theme -->
-    <style name="Theme.OpenClawDashboard" parent="android:Theme.Material.Light.NoActionBar">
+    <!-- Base Theme - Use AppCompat for compatibility with AppCompatActivity -->
+    <style name="Theme.OpenClawDashboard" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:statusBarColor">@color/primary</item>
         <item name="android:navigationBarColor">@color/surface</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
     </style>
     
     <!-- Splash Screen Theme -->
