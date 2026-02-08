@@ -129,6 +129,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                     }
+                    is GatewayEvent.Agent -> {
+                        val agentEvent = event.event
+                        // Check if this event is for the current session
+                        val eventSessionKey = agentEvent.sessionKey
+                        if (eventSessionKey == null || eventSessionKey == _currentSessionKey.value) {
+                            // Track lifecycle events for typing indicator
+                            if (agentEvent.stream == "lifecycle") {
+                                when (agentEvent.data?.phase) {
+                                    "start" -> {
+                                        _activeRunIds.add(agentEvent.runId)
+                                        _isAiTyping.value = true
+                                    }
+                                    "end", "error" -> {
+                                        _activeRunIds.remove(agentEvent.runId)
+                                        _isAiTyping.value = _activeRunIds.isNotEmpty()
+                                    }
+                                }
+                            }
+                        }
+                    }
                     is GatewayEvent.Shutdown -> {
                         // Handle shutdown
                     }

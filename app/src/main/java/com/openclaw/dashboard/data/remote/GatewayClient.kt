@@ -467,6 +467,12 @@ class GatewayClient {
                         GatewayEvent.Presence(presenceList)
                     }
                 }
+                "agent" -> {
+                    eventFrame.payload?.let {
+                        val agentEvent = json.decodeFromJsonElement<AgentEvent>(it)
+                        GatewayEvent.Agent(agentEvent)
+                    }
+                }
                 "shutdown" -> {
                     eventFrame.payload?.let {
                         val shutdownEvent = json.decodeFromJsonElement<ShutdownEvent>(it)
@@ -511,6 +517,7 @@ sealed class ConnectionState {
 sealed class GatewayEvent {
     data class Tick(val timestamp: Long) : GatewayEvent()
     data class Chat(val event: ChatEvent) : GatewayEvent()
+    data class Agent(val event: AgentEvent) : GatewayEvent()
     data class Presence(val entries: List<PresenceEntry>) : GatewayEvent()
     data class Shutdown(val reason: String, val restartExpectedMs: Int?) : GatewayEvent()
     data class Unknown(val event: String, val payload: JsonElement?) : GatewayEvent()

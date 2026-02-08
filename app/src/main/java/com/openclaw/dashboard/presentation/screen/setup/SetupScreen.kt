@@ -115,7 +115,7 @@ fun SetupScreen(
                 value = dashboardUrl,
                 onValueChange = { dashboardUrl = it },
                 label = { Text("Dashboard URL") },
-                placeholder = { Text("https://your-space.hf.space") },
+                placeholder = { Text("your dashboard url") },
                 leadingIcon = {
                     Icon(Icons.Filled.Link, contentDescription = null)
                 },

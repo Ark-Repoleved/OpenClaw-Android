@@ -279,6 +279,22 @@ data class ChatEvent(
 )
 
 @Serializable
+data class AgentEvent(
+    val runId: String,
+    val stream: String,       // "lifecycle", "assistant", "tool", etc.
+    val seq: Int,
+    val sessionKey: String? = null,
+    val data: AgentEventData? = null
+)
+
+@Serializable
+data class AgentEventData(
+    val phase: String? = null,  // "start", "end", "error" for lifecycle stream
+    val text: String? = null,
+    val error: String? = null
+)
+
+@Serializable
 data class ChatMessage(
     val role: String,
     val content: JsonElement? = null,  // Can be string or array
