@@ -78,7 +78,7 @@ data class ClientInfo(
     val version: String,
     val platform: String,
     val deviceFamily: String? = null,
-    val mode: String = "dashboard"
+    val mode: String = "ui"
 )
 
 @Serializable

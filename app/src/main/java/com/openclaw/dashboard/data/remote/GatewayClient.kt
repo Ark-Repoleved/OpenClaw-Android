@@ -240,12 +240,12 @@ class GatewayClient {
     
     private fun sendConnect(token: String?, password: String?) {
         val clientInfo = ClientInfo(
-            id = "android-dashboard-${UUID.randomUUID().toString().take(8)}",
+            id = "openclaw-android",  // Must be valid GATEWAY_CLIENT_ID
             displayName = "OpenClaw Android",
             version = "1.0.0",
             platform = "android",
             deviceFamily = android.os.Build.MANUFACTURER,
-            mode = "dashboard"
+            mode = "ui"  // Must be valid GATEWAY_CLIENT_MODE: webchat, cli, ui, backend, node, probe, test
         )
         
         val authParams = if (!token.isNullOrBlank() || !password.isNullOrBlank()) {
@@ -254,7 +254,7 @@ class GatewayClient {
         
         val connectParams = ConnectParams(
             client = clientInfo,
-            caps = listOf("chat", "sessions", "presence"),
+            caps = listOf("tool-events"),  // Valid cap from GATEWAY_CLIENT_CAPS
             auth = authParams
         )
         
