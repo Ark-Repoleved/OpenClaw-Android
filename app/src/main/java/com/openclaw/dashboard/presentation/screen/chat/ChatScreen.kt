@@ -237,7 +237,8 @@ fun ChatBubble(message: ChatEvent) {
     
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
+        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start,
+        verticalAlignment = Alignment.Bottom
     ) {
         if (!isUser) {
             Box(
