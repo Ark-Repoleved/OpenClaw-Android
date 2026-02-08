@@ -230,6 +230,11 @@ fun ChatBubble(message: ChatEvent) {
         processedContent
     }
     
+    // Don't render empty messages
+    if (content.isBlank()) {
+        return
+    }
+    
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
