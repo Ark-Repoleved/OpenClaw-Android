@@ -118,7 +118,13 @@ fun ChatScreen(
                     val filteredMessages = messages.filter { msg ->
                         val role = msg.message?.role?.lowercase() ?: ""
                         // Hide tool results, tool calls, and system messages
-                        role !in listOf("toolresult", "tool", "system", "toolcall")
+                        if (role in listOf("toolresult", "tool", "system", "toolcall")) {
+                            return@filter false
+                        }
+                        
+                        // Also filter out messages with empty content
+                        val content = extractMessageContent(msg)
+                        content.isNotBlank()
                     }
                     
                     LazyColumn(
@@ -193,6 +199,45 @@ fun ChatInputBar(
                 Icon(Icons.Filled.Send, contentDescription = "傳送")
             }
         }
+    }
+}
+
+/**
+ * Helper function to extract text content from a ChatEvent for filtering
+ */
+private fun extractMessageContent(message: ChatEvent): String {
+    val rawContent = message.delta ?: run {
+        val contentElement = message.message?.content
+        if (contentElement != null) {
+            try {
+                if (contentElement.toString().startsWith("\"")) {
+                    contentElement.toString().trim('"')
+                } else {
+                    val array = contentElement as? kotlinx.serialization.json.JsonArray
+                    array?.mapNotNull { item ->
+                        val obj = item as? kotlinx.serialization.json.JsonObject
+                        val type = obj?.get("type")?.toString()?.trim('"')
+                        if (type == "text") {
+                            obj["text"]?.toString()?.trim('"')
+                        } else null
+                    }?.joinToString("\n") ?: ""
+                }
+            } catch (e: Exception) {
+                contentElement.toString()
+            }
+        } else ""
+    }
+    
+    // Process and filter thinking tags for AI messages
+    val isUser = message.message?.role == "user"
+    val processedContent = rawContent
+        .replace("\\n", "\n")
+        .replace("\\t", "\t")
+    
+    return if (!isUser) {
+        TextUtils.stripThinkingTags(processedContent)
+    } else {
+        processedContent
     }
 }
 
