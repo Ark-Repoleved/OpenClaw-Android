@@ -23,7 +23,7 @@
     
     <!-- Navigation -->
     <string name="nav_overview">總覽</string>
-    <string name="nav_sessions">Sessions</string>
+    <string name="nav_sessions">對話</string>
     <string name="nav_chat">聊天</string>
     <string name="nav_instances">裝置</string>
     
@@ -35,11 +35,11 @@
     <string name="overview_uptime">運行時間</string>
     <string name="overview_version">版本</string>
     <string name="overview_connected_clients">已連線裝置</string>
-    <string name="overview_active_sessions">活躍 Sessions</string>
+    <string name="overview_active_sessions">活躍對話</string>
     
     <!-- Sessions Screen -->
-    <string name="sessions_title">Sessions</string>
-    <string name="sessions_empty">目前沒有 Sessions</string>
+    <string name="sessions_title">對話</string>
+    <string name="sessions_empty">目前沒有對話</string>
     <string name="sessions_delete">刪除</string>
     <string name="sessions_reset">重置</string>
     <string name="sessions_tokens_used">已使用 Token</string>
@@ -48,7 +48,7 @@
     <string name="chat_title">聊天</string>
     <string name="chat_input_hint">輸入訊息…</string>
     <string name="chat_send">傳送</string>
-    <string name="chat_select_session">選擇 Session</string>
+    <string name="chat_select_session">選擇對話</string>
     
     <!-- Instances Screen -->
     <string name="instances_title">已連線裝置</string>
