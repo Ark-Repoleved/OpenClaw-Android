@@ -306,7 +306,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         )
                     )
                 }
-                _chatMessages.value = historyEvents
+                _chatMessages.update { currentMessages ->
+                    // Keep messages that are not history (e.g. optimistic user messages or live AI deltas)
+                    val pendingMessages = currentMessages.filter { !it.runId.startsWith("history-") }
+                    historyEvents + pendingMessages
+                }
             }
         }
     }
