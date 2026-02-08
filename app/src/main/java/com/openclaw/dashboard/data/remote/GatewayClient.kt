@@ -239,9 +239,8 @@ class GatewayClient {
     }
     
     private fun sendConnect(token: String?, password: String?) {
-        // Build hello frame manually to avoid null values
-        val helloFrame = buildJsonObject {
-            put("type", "hello")
+        // Build connect params
+        val connectParams = buildJsonObject {
             put("minProtocol", 1)
             put("maxProtocol", 1)
             
@@ -269,8 +268,16 @@ class GatewayClient {
             }
         }
         
-        val frameJson = json.encodeToString(helloFrame)
-        Log.d(TAG, "Sending hello frame: $frameJson")
+        // The handshake must be a request frame: { type: "req", method: "connect", params: ConnectParams }
+        val requestFrame = buildJsonObject {
+            put("type", "req")
+            put("id", UUID.randomUUID().toString())
+            put("method", "connect")
+            put("params", connectParams)
+        }
+        
+        val frameJson = json.encodeToString(requestFrame)
+        Log.d(TAG, "Sending connect frame: $frameJson")
         webSocket?.send(frameJson)
     }
     
