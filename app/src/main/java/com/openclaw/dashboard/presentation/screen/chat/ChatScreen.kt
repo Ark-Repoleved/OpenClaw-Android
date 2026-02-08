@@ -259,7 +259,7 @@ fun ChatInputBar(
                     enabled = enabled
                 ) {
                     Icon(
-                        Icons.Filled.Image,
+                        Icons.Filled.Add,
                         contentDescription = "附加圖片",
                         tint = MaterialTheme.colorScheme.primary
                     )
