@@ -21,7 +21,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.remote.ConnectionState
 import com.openclaw.dashboard.presentation.MainViewModel
 
@@ -95,13 +97,13 @@ fun SetupScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "連線到您的 AI 代理",
+                text = stringResource(R.string.setup_connect_to_agent),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.SemiBold
             )
             
             Text(
-                text = "輸入您的 Dashboard URL 來開始管理",
+                text = stringResource(R.string.setup_enter_url_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -114,8 +116,8 @@ fun SetupScreen(
             OutlinedTextField(
                 value = dashboardUrl,
                 onValueChange = { dashboardUrl = it },
-                label = { Text("Dashboard URL") },
-                placeholder = { Text("your dashboard url") },
+                label = { Text(stringResource(R.string.setup_url_label)) },
+                placeholder = { Text(stringResource(R.string.setup_url_hint)) },
                 leadingIcon = {
                     Icon(Icons.Filled.Link, contentDescription = null)
                 },
@@ -137,8 +139,8 @@ fun SetupScreen(
             OutlinedTextField(
                 value = hfToken,
                 onValueChange = { hfToken = it },
-                label = { Text("Hugging Face Token") },
-                placeholder = { Text("hf_xxxxx（私有 Space 必填）") },
+                label = { Text(stringResource(R.string.setup_hf_token_label)) },
+                placeholder = { Text(stringResource(R.string.setup_hf_token_hint)) },
                 leadingIcon = {
                     Icon(Icons.Filled.Key, contentDescription = null)
                 },
@@ -146,7 +148,7 @@ fun SetupScreen(
                     IconButton(onClick = { showHfToken = !showHfToken }) {
                         Icon(
                             imageVector = if (showHfToken) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = if (showHfToken) "隱藏" else "顯示"
+                            contentDescription = if (showHfToken) stringResource(R.string.setup_hide) else stringResource(R.string.setup_show)
                         )
                     }
                 },
@@ -172,7 +174,7 @@ fun SetupScreen(
             ) {
                 Divider(modifier = Modifier.weight(1f))
                 Text(
-                    text = "  選填  ",
+                    text = "  ${stringResource(R.string.setup_optional)}  ",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -185,7 +187,7 @@ fun SetupScreen(
             OutlinedTextField(
                 value = gatewayToken,
                 onValueChange = { gatewayToken = it },
-                label = { Text("Gateway Token（選填）") },
+                label = { Text(stringResource(R.string.setup_gateway_token_label)) },
                 leadingIcon = {
                     Icon(Icons.Filled.Token, contentDescription = null)
                 },
@@ -207,7 +209,7 @@ fun SetupScreen(
             OutlinedTextField(
                 value = gatewayPassword,
                 onValueChange = { gatewayPassword = it },
-                label = { Text("Gateway Password（選填）") },
+                label = { Text(stringResource(R.string.setup_gateway_password_label)) },
                 leadingIcon = {
                     Icon(Icons.Filled.Lock, contentDescription = null)
                 },
@@ -215,7 +217,7 @@ fun SetupScreen(
                     IconButton(onClick = { showGatewayPassword = !showGatewayPassword }) {
                         Icon(
                             imageVector = if (showGatewayPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = if (showGatewayPassword) "隱藏" else "顯示"
+                            contentDescription = if (showGatewayPassword) stringResource(R.string.setup_hide) else stringResource(R.string.setup_show)
                         )
                     }
                 },
@@ -289,11 +291,11 @@ fun SetupScreen(
                         strokeWidth = 2.dp
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("連線中...")
+                    Text(stringResource(R.string.setup_connecting))
                 } else {
                     Icon(Icons.Filled.Login, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("連線", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.setup_connect), style = MaterialTheme.typography.titleMedium)
                 }
             }
             
@@ -301,7 +303,7 @@ fun SetupScreen(
             
             // Help text
             Text(
-                text = "提示：HF Token 可在 huggingface.co/settings/tokens 建立",
+                text = stringResource(R.string.setup_hf_token_tip),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

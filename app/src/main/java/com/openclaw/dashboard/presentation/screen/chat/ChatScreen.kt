@@ -21,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.presentation.MainViewModel
 import com.openclaw.dashboard.presentation.components.MarkdownText
@@ -181,7 +183,7 @@ fun ChatInputBar(
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text("輸入訊息...") },
+                placeholder = { Text(stringResource(R.string.chat_input_hint)) },
                 modifier = Modifier.weight(1f),
                 enabled = enabled,
                 maxLines = 4,

@@ -12,8 +12,6 @@
 - **Secure Authentication**: Supports Hugging Face Private Space authentication for secure access.
 - **Session Management**: View and manage active sessions with real-time token usage statistics.
 - **Live Chat Interface**: Interact with your AI agents directly through a responsive chat interface.
-  - **Real-time Typing Indicator**: Visual feedback when the AI is processing, executing tools, or "thinking".
-  - **Tool Execution Tracking**: Monitor valid tool execution states (start/end/error) directly in the chat.
 - **Instance Monitoring**: Keep track of connected devices and their status.
 - **Modern UI**: Built with Jetpack Compose and Material 3 for a beautiful, dynamic, and responsive user experience.
 
