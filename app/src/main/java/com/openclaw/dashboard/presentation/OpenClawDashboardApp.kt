@@ -37,10 +37,12 @@ fun OpenClawDashboardApp(
     
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (isConfigured) {
-                NavigationBar {
+                // NavigationBar handles system navigation bar insets automatically
+                NavigationBar(
+                    windowInsets = WindowInsets.navigationBars
+                ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
                     
@@ -76,7 +78,8 @@ fun OpenClawDashboardApp(
             startDestination = startDestination,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding())
+                .consumeWindowInsets(innerPadding)
+                .padding(innerPadding)
         ) {
             composable(Screen.Setup.route) {
                 SetupScreen(
