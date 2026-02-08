@@ -31,6 +31,7 @@ class SettingsRepository(private val context: Context) {
         private val KEY_IS_CONFIGURED = booleanPreferencesKey("is_configured")
         private val KEY_USE_DYNAMIC_COLOR = booleanPreferencesKey("use_dynamic_color")
         private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
+        private val KEY_LAST_SESSION_KEY = stringPreferencesKey("last_session_key")
     }
     
     /**
@@ -120,6 +121,26 @@ class SettingsRepository(private val context: Context) {
     }
     
     /**
+     * Get last selected session key
+     */
+    val lastSessionKey: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[KEY_LAST_SESSION_KEY]
+    }
+    
+    /**
+     * Save last selected session key
+     */
+    suspend fun setLastSessionKey(sessionKey: String?) {
+        context.dataStore.edit { preferences ->
+            if (sessionKey != null) {
+                preferences[KEY_LAST_SESSION_KEY] = sessionKey
+            } else {
+                preferences.remove(KEY_LAST_SESSION_KEY)
+            }
+        }
+    }
+    
+    /**
      * Clear all settings
      */
     suspend fun clearSettings() {
@@ -128,4 +149,3 @@ class SettingsRepository(private val context: Context) {
         }
     }
 }
-

@@ -125,6 +125,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 if (state is ConnectionState.Connected) {
                     // Load sessions when connected
                     loadSessions()
+                    // Restore last selected session
+                    settingsRepository.lastSessionKey.first()?.let { savedSessionKey ->
+                        if (_currentSessionKey.value == null) {
+                            _currentSessionKey.value = savedSessionKey
+                            loadChatHistory(savedSessionKey)
+                        }
+                    }
                 }
             }
         }
@@ -227,6 +234,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _currentSessionKey.value = key
         _chatMessages.value = emptyList()
         loadChatHistory(key)
+        // Persist last session selection
+        viewModelScope.launch {
+            settingsRepository.setLastSessionKey(key)
+        }
     }
     
     /**
