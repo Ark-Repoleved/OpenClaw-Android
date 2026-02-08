@@ -173,9 +173,9 @@ fun ChatScreen(
                             return@filter false
                         }
                         
-                        // Also filter out messages with empty content (unless they have attachments)
+                        // Also filter out messages with empty content
                         val content = extractMessageContent(msg)
-                        content.isNotBlank() || !msg.attachments.isNullOrEmpty()
+                        content.isNotBlank()
                     }
                     
                     LazyColumn(
@@ -380,14 +380,13 @@ private fun extractMessageContent(message: ChatEvent): String {
     }
     
     // Process and filter thinking tags for AI messages
-    // Set preserveIncomplete=false to hide partial thinking during streaming
     val isUser = message.message?.role == "user"
     val processedContent = rawContent
         .replace("\\n", "\n")
         .replace("\\t", "\t")
     
     return if (!isUser) {
-        TextUtils.stripThinkingTags(processedContent, preserveIncomplete = false)
+        TextUtils.stripThinkingTags(processedContent)
     } else {
         processedContent
     }
@@ -495,13 +494,12 @@ fun ChatBubble(message: ChatEvent) {
     // Process content:
     // 1. Convert escaped newlines to actual newlines
     // 2. Strip thinking tags from AI responses (not from user messages)
-    // 3. Hide incomplete thinking tags (preserveIncomplete = false)
     val processedContent = rawContent
         .replace("\\n", "\n")
         .replace("\\t", "\t")
     
     val content = if (!isUser) {
-        TextUtils.stripThinkingTags(processedContent, preserveIncomplete = false)
+        TextUtils.stripThinkingTags(processedContent)
     } else {
         processedContent
     }

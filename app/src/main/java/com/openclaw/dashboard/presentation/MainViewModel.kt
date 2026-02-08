@@ -125,49 +125,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                                 }
                             }
                             
-                            // Process message updates (delta or final)
-                            _chatMessages.update { messages ->
-                                val existingIndex = messages.indexOfFirst { it.runId == chatEvent.runId }
-                                
-                                if (existingIndex != -1) {
-                                    // Update existing message
-                                    val existing = messages[existingIndex]
-                                    val updatedList = messages.toMutableList()
-                                    
-                                    if (chatEvent.state == "delta") {
-                                        // Append delta content
-                                        val currentContent = existing.delta ?: ""
-                                        val newContent = currentContent + (chatEvent.delta ?: "")
-                                        updatedList[existingIndex] = existing.copy(
-                                            delta = newContent,
-                                            seq = chatEvent.seq,
-                                            state = "delta"
-                                        )
-                                    } else {
-                                        // Final/Error state
-                                        // If final payload has content, use it; otherwise fallback to accumulated delta
-                                        val finalContent = chatEvent.delta ?: existing.delta
-                                        
-                                        // Merge message metadata if available
-                                        val mergedMessage = if (chatEvent.message != null) {
-                                            chatEvent.message
-                                        } else {
-                                            existing.message?.copy(
-                                                // Ensure content is updated if we used accumulated delta
-                                                // Note: ChatMessage content is JsonElement, tricky to update directly from string delta
-                                                // We rely on 'delta' field for display in ChatScreen
-                                            )
-                                        }
-                                        
-                                        updatedList[existingIndex] = chatEvent.copy(
-                                            delta = finalContent,
-                                            message = mergedMessage
-                                        )
-                                    }
-                                    updatedList
-                                } else {
-                                    // New message (start of stream or full message)
-                                    messages + chatEvent
+                            // Only process final messages, and dedupe by runId
+                            if (chatEvent.state == "final" || chatEvent.state == "error") {
+                                _chatMessages.update { messages ->
+                                    // Remove any existing message with same runId (update instead of dup)
+                                    val filtered = messages.filter { it.runId != chatEvent.runId }
+                                    filtered + chatEvent
                                 }
                             }
                         }
