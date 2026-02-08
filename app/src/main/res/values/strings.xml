@@ -62,4 +62,10 @@
     <string name="action_disconnect">Disconnect</string>
     <string name="action_settings">Settings</string>
     <string name="loading">Loading…</string>
+    
+    <!-- Language -->
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">繁體中文</string>
+    <string name="language_system">System Default</string>
 </resources>

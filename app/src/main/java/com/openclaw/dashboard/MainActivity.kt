@@ -1,9 +1,9 @@
 package com.openclaw.dashboard
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,7 +14,7 @@ import com.openclaw.dashboard.presentation.MainViewModel
 import com.openclaw.dashboard.presentation.OpenClawDashboardApp
 import com.openclaw.dashboard.presentation.theme.OpenClawTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)

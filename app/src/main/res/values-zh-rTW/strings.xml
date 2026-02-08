@@ -62,4 +62,10 @@
     <string name="action_disconnect">斷線</string>
     <string name="action_settings">設定</string>
     <string name="loading">載入中…</string>
+    
+    <!-- Language -->
+    <string name="language">語言</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">繁體中文</string>
+    <string name="language_system">系統預設</string>
 </resources>

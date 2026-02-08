@@ -1,5 +1,7 @@
 package com.openclaw.dashboard.presentation.screen.setup
 
+import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.remote.ConnectionState
 import com.openclaw.dashboard.presentation.MainViewModel
@@ -42,7 +46,9 @@ fun SetupScreen(
     var gatewayPassword by remember { mutableStateOf("") }
     var showHfToken by remember { mutableStateOf(false) }
     var showGatewayPassword by remember { mutableStateOf(false) }
+    var showLanguageMenu by remember { mutableStateOf(false) }
     
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     
     // Initialize from saved settings
@@ -70,6 +76,59 @@ fun SetupScreen(
             LargeTopAppBar(
                 title = {
                     Text("OpenClaw Dashboard")
+                },
+                actions = {
+                    // Language selector
+                    Box {
+                        IconButton(onClick = { showLanguageMenu = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.Language,
+                                contentDescription = stringResource(R.string.language)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showLanguageMenu,
+                            onDismissRequest = { showLanguageMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.language_english)) },
+                                onClick = {
+                                    AppCompatDelegate.setApplicationLocales(
+                                        LocaleListCompat.forLanguageTags("en")
+                                    )
+                                    showLanguageMenu = false
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Filled.Language, contentDescription = null)
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.language_chinese)) },
+                                onClick = {
+                                    AppCompatDelegate.setApplicationLocales(
+                                        LocaleListCompat.forLanguageTags("zh-TW")
+                                    )
+                                    showLanguageMenu = false
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Filled.Language, contentDescription = null)
+                                }
+                            )
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.language_system)) },
+                                onClick = {
+                                    AppCompatDelegate.setApplicationLocales(
+                                        LocaleListCompat.getEmptyLocaleList()
+                                    )
+                                    showLanguageMenu = false
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Filled.PhoneAndroid, contentDescription = null)
+                                }
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
