@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.openclaw.dashboard.data.remote.ConnectionState
 import com.openclaw.dashboard.presentation.MainViewModel
+import com.openclaw.dashboard.presentation.components.SettingsDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +28,21 @@ fun OverviewScreen(
     val isHealthy by viewModel.isHealthy.collectAsState()
     val uptimeFormatted by viewModel.uptimeFormatted.collectAsState()
     val connectedInstances by viewModel.connectedInstances.collectAsState()
+    
+    // Theme settings state
+    val themeMode by viewModel.themeMode.collectAsState()
+    val useDynamicColor by viewModel.useDynamicColor.collectAsState()
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    
+    // Settings Dialog
+    SettingsDialog(
+        isOpen = showSettingsDialog,
+        onDismiss = { showSettingsDialog = false },
+        currentThemeMode = themeMode,
+        onThemeModeChange = { viewModel.setThemeMode(it) },
+        useDynamicColor = useDynamicColor,
+        onDynamicColorChange = { viewModel.setUseDynamicColor(it) }
+    )
     
     Scaffold(
         topBar = {
@@ -46,8 +62,16 @@ fun OverviewScreen(
                         imageVector = statusIcon,
                         contentDescription = "連線狀態",
                         tint = statusColor,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = 8.dp)
                     )
+                    
+                    // Settings button
+                    IconButton(onClick = { showSettingsDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "設定"
+                        )
+                    }
                 }
             )
         }

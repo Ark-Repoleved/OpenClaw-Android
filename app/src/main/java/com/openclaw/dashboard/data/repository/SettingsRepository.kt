@@ -10,6 +10,15 @@ import kotlinx.coroutines.flow.map
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "openclaw_settings")
 
 /**
+ * Theme mode options
+ */
+enum class ThemeMode {
+    SYSTEM,  // Follow system setting
+    LIGHT,   // Always light
+    DARK     // Always dark
+}
+
+/**
  * Repository for storing connection settings
  */
 class SettingsRepository(private val context: Context) {
@@ -21,6 +30,7 @@ class SettingsRepository(private val context: Context) {
         private val KEY_GATEWAY_PASSWORD = stringPreferencesKey("gateway_password")
         private val KEY_IS_CONFIGURED = booleanPreferencesKey("is_configured")
         private val KEY_USE_DYNAMIC_COLOR = booleanPreferencesKey("use_dynamic_color")
+        private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
     }
     
     /**
@@ -62,6 +72,18 @@ class SettingsRepository(private val context: Context) {
     }
     
     /**
+     * Get theme mode preference
+     */
+    val themeMode: Flow<ThemeMode> = context.dataStore.data.map { preferences ->
+        val modeString = preferences[KEY_THEME_MODE] ?: ThemeMode.SYSTEM.name
+        try {
+            ThemeMode.valueOf(modeString)
+        } catch (e: IllegalArgumentException) {
+            ThemeMode.SYSTEM
+        }
+    }
+    
+    /**
      * Save connection settings
      */
     suspend fun saveConnectionSettings(
@@ -89,6 +111,15 @@ class SettingsRepository(private val context: Context) {
     }
     
     /**
+     * Update theme mode preference
+     */
+    suspend fun setThemeMode(mode: ThemeMode) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_THEME_MODE] = mode.name
+        }
+    }
+    
+    /**
      * Clear all settings
      */
     suspend fun clearSettings() {
@@ -97,3 +128,4 @@ class SettingsRepository(private val context: Context) {
         }
     }
 }
+

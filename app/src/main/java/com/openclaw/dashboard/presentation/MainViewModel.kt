@@ -11,6 +11,7 @@ import com.openclaw.dashboard.data.remote.ConnectionState
 import com.openclaw.dashboard.data.remote.GatewayClient
 import com.openclaw.dashboard.data.remote.GatewayEvent
 import com.openclaw.dashboard.data.repository.SettingsRepository
+import com.openclaw.dashboard.data.repository.ThemeMode
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val connectionState = gatewayClient.connectionState
     val snapshot = gatewayClient.snapshot
     val serverInfo = gatewayClient.serverInfo
+    
+    // Theme settings
+    val themeMode = settingsRepository.themeMode.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        ThemeMode.SYSTEM
+    )
+    
+    val useDynamicColor = settingsRepository.useDynamicColor.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        true
+    )
+    
+    fun setThemeMode(mode: ThemeMode) {
+        viewModelScope.launch {
+            settingsRepository.setThemeMode(mode)
+        }
+    }
+    
+    fun setUseDynamicColor(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setUseDynamicColor(enabled)
+        }
+    }
     
     // Sessions
     private val _sessions = MutableStateFlow<List<SessionInfo>>(emptyList())
