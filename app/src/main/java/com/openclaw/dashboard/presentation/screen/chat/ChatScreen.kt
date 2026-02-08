@@ -2,14 +2,17 @@ package com.openclaw.dashboard.presentation.screen.chat
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -18,15 +21,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.halilibo.richtext.commonmark.Markdown
+import com.halilibo.richtext.commonmark.MarkdownParseOptions
+import com.halilibo.richtext.ui.CodeBlockStyle
+import com.halilibo.richtext.ui.RichTextStyle
 import com.halilibo.richtext.ui.material3.RichText
+import com.halilibo.richtext.ui.string.RichTextStringStyle
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.presentation.MainViewModel
 import com.openclaw.dashboard.util.TextUtils
 import kotlinx.coroutines.launch
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -251,13 +262,43 @@ fun ChatBubble(message: ChatEvent) {
                 bottomStart = if (isUser) 16.dp else 4.dp,
                 bottomEnd = if (isUser) 4.dp else 16.dp
             ),
-            modifier = Modifier.widthIn(max = 280.dp)
+            modifier = Modifier.widthIn(max = 320.dp)
         ) {
-            // Use RichText for Markdown rendering
-            RichText(
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Markdown(content = content)
+            // Custom styling for code blocks
+            val codeBlockStyle = CodeBlockStyle(
+                textStyle = SpanStyle(
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                background = MaterialTheme.colorScheme.surfaceContainerHighest,
+                padding = 12.dp
+            )
+            
+            val richTextStyle = RichTextStyle(
+                codeBlockStyle = codeBlockStyle,
+                stringStyle = RichTextStringStyle(
+                    codeStyle = SpanStyle(
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 13.sp,
+                        background = MaterialTheme.colorScheme.surfaceContainerHighest
+                    )
+                )
+            )
+            
+            // Enable text selection for copy-paste
+            SelectionContainer {
+                RichText(
+                    modifier = Modifier.padding(12.dp),
+                    style = richTextStyle
+                ) {
+                    Markdown(
+                        content = content,
+                        markdownParseOptions = MarkdownParseOptions(
+                            autolink = true  // Auto-link URLs
+                        )
+                    )
+                }
             }
         }
         

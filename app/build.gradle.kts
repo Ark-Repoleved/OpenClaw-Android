@@ -109,9 +109,11 @@ dependencies {
     // Splash Screen API
     implementation("androidx.core:core-splashscreen:1.0.1")
     
-    // Markdown rendering
-    implementation("com.halilibo.compose-richtext:richtext-commonmark:1.0.0-alpha01")
-    implementation("com.halilibo.compose-richtext:richtext-ui-material3:1.0.0-alpha01")
+    // Markdown rendering - complete support
+    val richtextVersion = "1.0.0-alpha01"
+    implementation("com.halilibo.compose-richtext:richtext-commonmark:$richtextVersion")
+    implementation("com.halilibo.compose-richtext:richtext-ui-material3:$richtextVersion")
+    implementation("com.halilibo.compose-richtext:richtext-ui:$richtextVersion")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
