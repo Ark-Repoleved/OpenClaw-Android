@@ -25,6 +25,7 @@ import com.halilibo.richtext.commonmark.Markdown
 import com.halilibo.richtext.ui.material3.RichText
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.presentation.MainViewModel
+import com.openclaw.dashboard.util.TextUtils
 import kotlinx.coroutines.launch
 
 
@@ -184,7 +185,7 @@ fun ChatBubble(message: ChatEvent) {
     val isUser = message.message?.role == "user"
     
     // Extract text content from message or delta
-    val content = message.delta ?: run {
+    val rawContent = message.delta ?: run {
         // Try to parse content from message.content (can be string or array)
         val contentElement = message.message?.content
         if (contentElement != null) {
@@ -207,6 +208,13 @@ fun ChatBubble(message: ChatEvent) {
                 contentElement.toString()
             }
         } else ""
+    }
+    
+    // Strip thinking tags from AI responses (not from user messages)
+    val content = if (!isUser) {
+        TextUtils.stripThinkingTags(rawContent)
+    } else {
+        rawContent
     }
     
     Row(
