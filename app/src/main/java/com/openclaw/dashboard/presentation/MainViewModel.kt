@@ -300,9 +300,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             )
             _chatMessages.update { it + optimisticMessage }
             
-            // Show typing indicator immediately after sending
-            _isAiTyping.value = true
-            
             gatewayClient.sendChatMessage(sessionKey, message)
         }
     }
