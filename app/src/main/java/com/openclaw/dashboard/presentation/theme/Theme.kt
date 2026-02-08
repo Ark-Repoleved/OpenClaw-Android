@@ -82,6 +82,7 @@ fun OpenClawTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
+            val window = (view.context as Activity).window
             // Make status bar transparent to match the content below
             window.statusBarColor = android.graphics.Color.TRANSPARENT
             window.navigationBarColor = android.graphics.Color.TRANSPARENT
