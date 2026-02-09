@@ -1,9 +1,8 @@
 package com.openclaw.dashboard.presentation.screen.agentfiles
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
@@ -18,7 +17,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.openclaw.dashboard.R
@@ -95,57 +93,55 @@ fun AgentFilesScreen(
             )
         }
     ) { paddingValues ->
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Left panel: File list
-            FileListPanel(
+            // Top: Horizontal scrollable file chips
+            FileChipsRow(
                 files = files,
                 selectedFileName = selectedFileName,
                 isLoading = isLoading,
-                onFileSelect = { viewModel.selectAgentFile(it) },
-                modifier = Modifier
-                    .width(160.dp)
-                    .fillMaxHeight()
+                onFileSelect = { viewModel.selectAgentFile(it) }
             )
             
             // Divider
-            VerticalDivider()
+            HorizontalDivider()
             
-            // Right panel: Editor
+            // Editor area
             EditorPanel(
                 selectedFileName = selectedFileName,
                 content = fileDraft,
                 onContentChange = { viewModel.updateAgentFileDraft(it) },
-                isLoading = isLoading,
+                isLoading = isLoading && selectedFileName != null,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxHeight()
+                    .fillMaxWidth()
             )
         }
     }
 }
 
 @Composable
-fun FileListPanel(
+fun FileChipsRow(
     files: List<AgentFileEntry>,
     selectedFileName: String?,
     isLoading: Boolean,
-    onFileSelect: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onFileSelect: (String) -> Unit
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-        modifier = modifier
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
     ) {
         if (isLoading && files.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
             }
         } else if (files.isEmpty()) {
             Box(
@@ -159,12 +155,14 @@ fun FileListPanel(
                 )
             }
         } else {
-            LazyColumn(
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize()
             ) {
                 items(files, key = { it.name }) { file ->
-                    FileListItem(
+                    FileChip(
                         file = file,
                         isSelected = file.name == selectedFileName,
                         onClick = { onFileSelect(file.name) }
@@ -176,63 +174,28 @@ fun FileListPanel(
 }
 
 @Composable
-fun FileListItem(
+fun FileChip(
     file: AgentFileEntry,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Surface(
-        color = if (isSelected) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surface
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = { 
+            Text(
+                text = file.name.removeSuffix(".md"),
+                style = MaterialTheme.typography.labelLarge
+            ) 
         },
-        shape = MaterialTheme.shapes.small,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Description,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = if (isSelected) {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                }
+                modifier = Modifier.size(18.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text(
-                    text = file.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    }
-                )
-                file.size?.let { size ->
-                    Text(
-                        text = formatFileSize(size),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (isSelected) {
-                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                    )
-                }
-            }
         }
-    }
+    )
 }
 
 @Composable
@@ -245,7 +208,7 @@ fun EditorPanel(
 ) {
     Box(modifier = modifier) {
         when {
-            isLoading && selectedFileName != null -> {
+            isLoading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -295,13 +258,5 @@ fun EditorPanel(
                 )
             }
         }
-    }
-}
-
-private fun formatFileSize(bytes: Int): String {
-    return when {
-        bytes < 1024 -> "$bytes B"
-        bytes < 1024 * 1024 -> "${bytes / 1024} KB"
-        else -> "${bytes / (1024 * 1024)} MB"
     }
 }
