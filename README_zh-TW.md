@@ -1,7 +1,8 @@
 [![GitHub All Releases](https://img.shields.io/github/downloads/Ark-Repoleved/OpenClaw-Android/total)](https://github.com/Ark-Repoleved/OpenClaw-Android/releases) [![GitHub release (latest by date)](https://img.shields.io/github/downloads/Ark-Repoleved/OpenClaw-Android/latest/total)](https://github.com/Ark-Repoleved/OpenClaw-Android/releases/latest)
 # OpenClaw Android Dashboard
 
-[English](README.md) | **繁體中文**
+[English](README.md) | **繁體中文** | <a href="https://ko-fi.com/issekisaji">
+    <img alt="Static Badge" align="top" src="https://raw.githubusercontent.com/Ark-Repoleved/bd2-android-mod-manager/refs/heads/main/.github/sparkle-mug.gif" height="24">
 
 ---
 
