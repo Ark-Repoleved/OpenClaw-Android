@@ -51,14 +51,14 @@ sealed class Screen(
         unselectedIcon = Icons.Outlined.Code
     )
     
-    data object Instances : Screen(
-        route = "instances",
-        titleResId = R.string.nav_instances,
-        selectedIcon = Icons.Filled.Devices,
-        unselectedIcon = Icons.Outlined.Devices
+    data object AgentFiles : Screen(
+        route = "agent_files",
+        titleResId = R.string.nav_agent_files,
+        selectedIcon = Icons.Filled.Description,
+        unselectedIcon = Icons.Outlined.Description
     )
     
     companion object {
-        val bottomNavItems = listOf(Overview, Sessions, Chat, Config, Instances)
+        val bottomNavItems = listOf(Overview, Sessions, Chat, Config, AgentFiles)
     }
 }

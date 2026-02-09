@@ -344,6 +344,56 @@ class GatewayClient {
         return request("sessions.delete", params).map { }
     }
     
+    // ============== Agent Files ==============
+    
+    /**
+     * Get list of agent files
+     */
+    suspend fun getAgentFilesList(agentId: String): Result<AgentFilesListResult> {
+        val params = buildJsonObject {
+            put("agentId", agentId)
+        }
+        
+        return request("agents.files.list", params).mapCatching { payload ->
+            payload?.let {
+                json.decodeFromJsonElement<AgentFilesListResult>(it)
+            } ?: AgentFilesListResult(agentId, "", emptyList())
+        }
+    }
+    
+    /**
+     * Get content of a specific agent file
+     */
+    suspend fun getAgentFile(agentId: String, name: String): Result<AgentFileGetResult> {
+        val params = buildJsonObject {
+            put("agentId", agentId)
+            put("name", name)
+        }
+        
+        return request("agents.files.get", params).mapCatching { payload ->
+            payload?.let {
+                json.decodeFromJsonElement<AgentFileGetResult>(it)
+            } ?: throw Exception("Empty response")
+        }
+    }
+    
+    /**
+     * Save content to an agent file
+     */
+    suspend fun setAgentFile(agentId: String, name: String, content: String): Result<AgentFileSetResult> {
+        val params = buildJsonObject {
+            put("agentId", agentId)
+            put("name", name)
+            put("content", content)
+        }
+        
+        return request("agents.files.set", params).mapCatching { payload ->
+            payload?.let {
+                json.decodeFromJsonElement<AgentFileSetResult>(it)
+            } ?: throw Exception("Empty response")
+        }
+    }
+    
     // ============== Private Methods ==============
     
     private fun buildWebSocketUrl(baseUrl: String): String {
