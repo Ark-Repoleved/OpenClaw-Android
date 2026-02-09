@@ -106,9 +106,6 @@ fun AgentFilesScreen(
                 onFileSelect = { viewModel.selectAgentFile(it) }
             )
             
-            // Divider
-            HorizontalDivider()
-            
             // Editor area
             EditorPanel(
                 selectedFileName = selectedFileName,
