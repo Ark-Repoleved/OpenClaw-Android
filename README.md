@@ -16,8 +16,3 @@
    - Enter your **Gateway Token**
 3. **Connect**: Tap "Connect" to establish a secure connection to your OpenClaw instance.
 4. **Manage**: Start chatting with your agents, view active sessions, and monitor your infrastructure!
-
----
-
-## ⭐ Stargazers over time
-[![Stargazers over time](https://starchart.cc/Ark-Repoleved/OpenClaw-Android.svg?variant=adaptive)](https://starchart.cc/Ark-Repoleved/OpenClaw-Android)
