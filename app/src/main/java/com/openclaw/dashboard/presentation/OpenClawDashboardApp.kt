@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.openclaw.dashboard.presentation.navigation.Screen
 import com.openclaw.dashboard.presentation.screen.chat.ChatScreen
 import com.openclaw.dashboard.presentation.screen.config.ConfigScreen
-import com.openclaw.dashboard.presentation.screen.instances.InstancesScreen
+import com.openclaw.dashboard.presentation.screen.agentfiles.AgentFilesScreen
 import com.openclaw.dashboard.presentation.screen.overview.OverviewScreen
 import com.openclaw.dashboard.presentation.screen.sessions.SessionsScreen
 import com.openclaw.dashboard.presentation.screen.setup.SetupScreen
@@ -109,8 +109,8 @@ fun OpenClawDashboardApp(
                 ConfigScreen(viewModel = mainViewModel)
             }
             
-            composable(Screen.Instances.route) {
-                InstancesScreen(viewModel = mainViewModel)
+            composable(Screen.AgentFiles.route) {
+                AgentFilesScreen(viewModel = mainViewModel)
             }
         }
     }

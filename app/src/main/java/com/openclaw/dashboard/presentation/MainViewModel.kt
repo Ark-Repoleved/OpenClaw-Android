@@ -3,6 +3,7 @@ package com.openclaw.dashboard.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.openclaw.dashboard.data.model.AgentFileEntry
 import com.openclaw.dashboard.data.model.ChatAttachment
 import com.openclaw.dashboard.data.model.ChatEvent
 import com.openclaw.dashboard.data.model.PresenceEntry
@@ -86,6 +87,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Chat attachments (pending attachments to be sent)
     private val _chatAttachments = MutableStateFlow<List<ChatAttachment>>(emptyList())
     val chatAttachments: StateFlow<List<ChatAttachment>> = _chatAttachments.asStateFlow()
+    
+    // ============== Agent Files ==============
+    private val _agentFilesList = MutableStateFlow<List<AgentFileEntry>>(emptyList())
+    val agentFilesList: StateFlow<List<AgentFileEntry>> = _agentFilesList.asStateFlow()
+    
+    private val _agentFilesLoading = MutableStateFlow(false)
+    val agentFilesLoading: StateFlow<Boolean> = _agentFilesLoading.asStateFlow()
+    
+    private val _selectedFileName = MutableStateFlow<String?>(null)
+    val selectedFileName: StateFlow<String?> = _selectedFileName.asStateFlow()
+    
+    private val _agentFileContent = MutableStateFlow("")
+    val agentFileContent: StateFlow<String> = _agentFileContent.asStateFlow()
+    
+    private val _agentFileDraft = MutableStateFlow("")
+    val agentFileDraft: StateFlow<String> = _agentFileDraft.asStateFlow()
+    
+    private val _isAgentFileSaving = MutableStateFlow(false)
+    val isAgentFileSaving: StateFlow<Boolean> = _isAgentFileSaving.asStateFlow()
+    
+    // Check if draft differs from original content
+    val isAgentFileModified: StateFlow<Boolean> = combine(_agentFileContent, _agentFileDraft) { original, draft ->
+        original != draft
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     
     // Connected instances (from presence)
     val connectedInstances: StateFlow<List<PresenceEntry>> = snapshot
@@ -388,6 +413,79 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun clearAttachments() {
         _chatAttachments.value = emptyList()
+    }
+    
+    // ============== Agent Files Methods ==============
+    
+    /**
+     * Load agent files list (using default agent "main")
+     */
+    fun loadAgentFiles() {
+        viewModelScope.launch {
+            _agentFilesLoading.value = true
+            gatewayClient.getAgentFilesList("main").onSuccess { result ->
+                _agentFilesList.value = result.files.filter { !it.missing }
+            }.onFailure {
+                // Handle error silently for now
+            }
+            _agentFilesLoading.value = false
+        }
+    }
+    
+    /**
+     * Select a file and load its content
+     */
+    fun selectAgentFile(name: String) {
+        _selectedFileName.value = name
+        viewModelScope.launch {
+            _agentFilesLoading.value = true
+            gatewayClient.getAgentFile("main", name).onSuccess { result ->
+                val content = result.file.content ?: ""
+                _agentFileContent.value = content
+                _agentFileDraft.value = content
+            }.onFailure {
+                _agentFileContent.value = ""
+                _agentFileDraft.value = ""
+            }
+            _agentFilesLoading.value = false
+        }
+    }
+    
+    /**
+     * Update the draft content (when user edits)
+     */
+    fun updateAgentFileDraft(content: String) {
+        _agentFileDraft.value = content
+    }
+    
+    /**
+     * Save the current file
+     */
+    fun saveAgentFile() {
+        val name = _selectedFileName.value ?: return
+        val content = _agentFileDraft.value
+        
+        viewModelScope.launch {
+            _isAgentFileSaving.value = true
+            gatewayClient.setAgentFile("main", name, content).onSuccess { result ->
+                if (result.ok) {
+                    _agentFileContent.value = content
+                    // Update file entry in list
+                    _agentFilesList.update { list ->
+                        list.map { if (it.name == name) result.file else it }
+                    }
+                }
+            }
+            _isAgentFileSaving.value = false
+        }
+    }
+    
+    /**
+     * Reload current file content (discard draft)
+     */
+    fun reloadAgentFile() {
+        val name = _selectedFileName.value ?: return
+        selectAgentFile(name)
     }
     
     /**

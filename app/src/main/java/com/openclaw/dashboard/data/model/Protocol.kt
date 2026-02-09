@@ -355,3 +355,37 @@ data class ConfigSetResult(
     val config: JsonElement? = null
 )
 
+// ============== Agent Files ==============
+
+@Serializable
+data class AgentFilesListResult(
+    val agentId: String,
+    val workspace: String,
+    val files: List<AgentFileEntry>
+)
+
+@Serializable
+data class AgentFileEntry(
+    val name: String,
+    val path: String,
+    val missing: Boolean,
+    val size: Int? = null,
+    val updatedAtMs: Long? = null,
+    val content: String? = null
+)
+
+@Serializable
+data class AgentFileGetResult(
+    val agentId: String,
+    val workspace: String,
+    val file: AgentFileEntry
+)
+
+@Serializable
+data class AgentFileSetResult(
+    val ok: Boolean,
+    val agentId: String,
+    val workspace: String,
+    val file: AgentFileEntry
+)
+

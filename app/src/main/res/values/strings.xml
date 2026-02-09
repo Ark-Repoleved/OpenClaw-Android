@@ -27,7 +27,7 @@
     <string name="nav_sessions">Sessions</string>
     <string name="nav_chat">Chat</string>
     <string name="nav_config">Config</string>
-    <string name="nav_instances">Instances</string>
+    <string name="nav_agent_files">Files</string>
     
     <!-- Overview Screen -->
     <string name="overview_health">System Status</string>
@@ -73,10 +73,14 @@
     <string name="config_load_failed">Failed to load</string>
     <string name="config_save_failed">Failed to save</string>
     
-    <!-- Instances Screen -->
-    <string name="instances_title">Connected Devices</string>
-    <string name="instances_empty">No connected devices</string>
-    <string name="instances_connection_time">Connection time:</string>
+    <!-- Agent Files Screen -->
+    <string name="agent_files_title">Agent Files</string>
+    <string name="agent_files_empty">No files available</string>
+    <string name="agent_files_select_hint">Select a file to edit</string>
+    <string name="agent_files_save">Save</string>
+    <string name="agent_files_saving">Saving…</string>
+    <string name="agent_files_saved">Saved</string>
+    <string name="agent_files_modified">Modified</string>
     
     <!-- Time Format -->
     <string name="time_just_now">Just now</string>
