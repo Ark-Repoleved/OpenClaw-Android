@@ -120,6 +120,12 @@ fun ChatScreen(
                     }
                 },
                 actions = {
+                    // Reload button - only show when session is selected
+                    if (currentSessionKey != null) {
+                        IconButton(onClick = { viewModel.reloadChatHistory() }) {
+                            Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.action_reload))
+                        }
+                    }
                     IconButton(onClick = { showSessionPicker = true }) {
                         Icon(Icons.Filled.SwapHoriz, contentDescription = stringResource(R.string.chat_select_session))
                     }

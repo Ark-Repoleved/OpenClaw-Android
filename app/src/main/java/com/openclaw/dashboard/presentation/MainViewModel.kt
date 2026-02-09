@@ -316,6 +316,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     /**
+     * Reload chat history for the current session
+     */
+    fun reloadChatHistory() {
+        val sessionKey = _currentSessionKey.value ?: return
+        _chatMessages.value = emptyList()
+        loadChatHistory(sessionKey)
+    }
+    
+    /**
      * Send chat message with optional attachments
      */
     fun sendMessage(message: String) {
