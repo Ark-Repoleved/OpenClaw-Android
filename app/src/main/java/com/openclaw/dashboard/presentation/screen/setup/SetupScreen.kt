@@ -194,36 +194,6 @@ fun SetupScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Hugging Face Token
-            OutlinedTextField(
-                value = hfToken,
-                onValueChange = { hfToken = it },
-                label = { Text(stringResource(R.string.setup_hf_token_label)) },
-                placeholder = { Text(stringResource(R.string.setup_hf_token_hint)) },
-                leadingIcon = {
-                    Icon(Icons.Filled.Key, contentDescription = null)
-                },
-                trailingIcon = {
-                    IconButton(onClick = { showHfToken = !showHfToken }) {
-                        Icon(
-                            imageVector = if (showHfToken) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = if (showHfToken) stringResource(R.string.setup_hide) else stringResource(R.string.setup_show)
-                        )
-                    }
-                },
-                visualTransformation = if (showHfToken) VisualTransformation.None else PasswordVisualTransformation(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading
-            )
-            
             // Optional section
             Spacer(modifier = Modifier.height(24.dp))
             
@@ -281,6 +251,38 @@ fun SetupScreen(
                     }
                 },
                 visualTransformation = if (showGatewayPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Hugging Face Token (for private HF Spaces)
+            OutlinedTextField(
+                value = hfToken,
+                onValueChange = { hfToken = it },
+                label = { Text(stringResource(R.string.setup_hf_token_label)) },
+                placeholder = { Text(stringResource(R.string.setup_hf_token_hint)) },
+                leadingIcon = {
+                    Icon(Icons.Filled.Key, contentDescription = null)
+                },
+                trailingIcon = {
+                    IconButton(onClick = { showHfToken = !showHfToken }) {
+                        Icon(
+                            imageVector = if (showHfToken) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                            contentDescription = if (showHfToken) stringResource(R.string.setup_hide) else stringResource(R.string.setup_show)
+                        )
+                    }
+                },
+                visualTransformation = if (showHfToken) VisualTransformation.None else PasswordVisualTransformation(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
