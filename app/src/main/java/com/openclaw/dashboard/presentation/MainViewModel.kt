@@ -76,14 +76,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _chatMessages = MutableStateFlow<List<ChatEvent>>(emptyList())
     val chatMessages: StateFlow<List<ChatEvent>> = _chatMessages.asStateFlow()
     
+    // AI typing indicator
     private val _currentSessionKey = MutableStateFlow<String?>(null)
     val currentSessionKey: StateFlow<String?> = _currentSessionKey.asStateFlow()
-    
-    // AI typing indicator
-    private val _isAiTyping = MutableStateFlow(false)
-    val isAiTyping: StateFlow<Boolean> = _isAiTyping.asStateFlow()
-    private val _activeRunIds = mutableSetOf<String>()  // Track active runIds
-    
+
+    private val _sessionActiveRunIds = MutableStateFlow<Map<String, Set<String>>>(emptyMap())
+    val isAiTyping: StateFlow<Boolean> = combine(_sessionActiveRunIds, _currentSessionKey) { runMap, currentKey ->
+        if (currentKey == null) false
+        else runMap[currentKey]?.isNotEmpty() ?: false
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     // Chat attachments (pending attachments to be sent)
     private val _chatAttachments = MutableStateFlow<List<ChatAttachment>>(emptyList())
     val chatAttachments: StateFlow<List<ChatAttachment>> = _chatAttachments.asStateFlow()
@@ -136,20 +138,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 when (event) {
                     is GatewayEvent.Chat -> {
                         val chatEvent = event.event
-                        if (chatEvent.sessionKey == _currentSessionKey.value) {
-                            // Update typing indicator by tracking active runIds
-                            // Any non-final state means AI is still processing
+                        
+                        // Update typing indicator map for ALL sessions (not just current)
+                        _sessionActiveRunIds.update { map ->
+                            val currentIds = map[chatEvent.sessionKey]?.toMutableSet() ?: mutableSetOf()
                             when (chatEvent.state) {
-                                "final", "error" -> {
-                                    _activeRunIds.remove(chatEvent.runId)
-                                    _isAiTyping.value = _activeRunIds.isNotEmpty()
-                                }
-                                else -> {
-                                    _activeRunIds.add(chatEvent.runId)
-                                    _isAiTyping.value = true
-                                }
+                                "final", "error" -> currentIds.remove(chatEvent.runId)
+                                else -> currentIds.add(chatEvent.runId)
                             }
-                            
+                            map + (chatEvent.sessionKey to currentIds)
+                        }
+
+                        // Update messages if it's the current session
+                        if (chatEvent.sessionKey == _currentSessionKey.value) {
                             // Only process final messages, and dedupe by runId
                             if (chatEvent.state == "final" || chatEvent.state == "error") {
                                 _chatMessages.update { messages ->
@@ -162,21 +163,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     }
                     is GatewayEvent.Agent -> {
                         val agentEvent = event.event
-                        // Check if this event is for the current session
-                        val eventSessionKey = agentEvent.sessionKey
-                        if (eventSessionKey == null || eventSessionKey == _currentSessionKey.value) {
-                            // Track lifecycle events for typing indicator
-                            if (agentEvent.stream == "lifecycle") {
+                        val sessionKey = agentEvent.sessionKey ?: _currentSessionKey.value
+                        
+                        if (sessionKey != null && agentEvent.stream == "lifecycle") {
+                            _sessionActiveRunIds.update { map ->
+                                val currentIds = map[sessionKey]?.toMutableSet() ?: mutableSetOf()
                                 when (agentEvent.data?.phase) {
-                                    "start" -> {
-                                        _activeRunIds.add(agentEvent.runId)
-                                        _isAiTyping.value = true
-                                    }
-                                    "end", "error" -> {
-                                        _activeRunIds.remove(agentEvent.runId)
-                                        _isAiTyping.value = _activeRunIds.isNotEmpty()
-                                    }
+                                    "start" -> currentIds.add(agentEvent.runId)
+                                    "end", "error" -> currentIds.remove(agentEvent.runId)
                                 }
+                                map + (sessionKey to currentIds)
                             }
                         }
                     }
@@ -192,6 +188,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             connectionState.collect { state ->
                 if (state is ConnectionState.Connected) {
+                    // Recover typing state from snapshot presence if available
+                    snapshot.value?.presence?.forEach { entry ->
+                        // In OpenClaw, active runs often show up in presence text or tags
+                        // If PresenceEntry is from an agent and has session info in metadata (OpenClaw standard)
+                        // Note: Depending on server config, this might vary.
+                        // For now, if presence has a sessionKey-like tag, we could use it.
+                        // But more reliably, we can't do much without server-side support.
+                        // HOWEVER, we can at least clear the map on reconnect to avoid stale data.
+                        _sessionActiveRunIds.value = emptyMap()
+                    }
+
                     // Load sessions when connected
                     loadSessions()
                     // Restore last selected session
@@ -570,4 +577,3 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return getApplication<Application>().getString(resId, *args)
     }
 }
-
