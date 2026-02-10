@@ -34,6 +34,7 @@ fun OverviewScreen(
     // Theme settings state
     val themeMode by viewModel.themeMode.collectAsState()
     val useDynamicColor by viewModel.useDynamicColor.collectAsState()
+    val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     var showSettingsDialog by remember { mutableStateOf(false) }
     
     // Settings Dialog
@@ -43,7 +44,9 @@ fun OverviewScreen(
         currentThemeMode = themeMode,
         onThemeModeChange = { viewModel.setThemeMode(it) },
         useDynamicColor = useDynamicColor,
-        onDynamicColorChange = { viewModel.setUseDynamicColor(it) }
+        onDynamicColorChange = { viewModel.setUseDynamicColor(it) },
+        notificationsEnabled = notificationsEnabled,
+        onNotificationsEnabledChange = { viewModel.setNotificationsEnabled(it) }
     )
     
     Scaffold(

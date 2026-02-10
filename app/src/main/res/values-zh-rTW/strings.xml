@@ -64,6 +64,11 @@
     <string name="chat_no_session">目前沒有可用的 Session</string>
     <string name="chat_select_a_session">選擇一個 Session</string>
     
+    <!-- Notifications -->
+    <string name="notification_channel_chat">AI 回覆</string>
+    <string name="notification_channel_chat_desc">AI 聊天回覆通知</string>
+    <string name="notification_chat_default_title">AI 回覆</string>
+    
     <!-- Config Screen -->
     <string name="config_title">配置編輯器</string>
     <string name="config_saving">儲存中…</string>
@@ -120,6 +125,8 @@
     <string name="theme_dark">深色模式</string>
     <string name="settings_dynamic_color">動態色彩</string>
     <string name="settings_dynamic_color_desc">使用壁紙色彩</string>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_notifications_desc">AI 回覆時發送通知</string>
     <string name="settings_done">完成</string>
     
     <!-- Language -->
