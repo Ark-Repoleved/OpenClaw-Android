@@ -4,6 +4,7 @@ import android.util.Log
 import com.openclaw.dashboard.data.model.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -45,8 +46,8 @@ class GatewayClient {
     private val _connectionState = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     val connectionState: StateFlow<ConnectionState> = _connectionState.asStateFlow()
     
-    private val _events = MutableSharedFlow<GatewayEvent>(extraBufferCapacity = 64)
-    val events: SharedFlow<GatewayEvent> = _events.asSharedFlow()
+    private val _eventChannel = Channel<GatewayEvent>(UNLIMITED)
+    val events: Flow<GatewayEvent> = _eventChannel.receiveAsFlow()
     
     private val _snapshot = MutableStateFlow<Snapshot?>(null)
     val snapshot: StateFlow<Snapshot?> = _snapshot.asStateFlow()
@@ -539,7 +540,7 @@ class GatewayClient {
                 else -> GatewayEvent.Unknown(eventFrame.event, eventFrame.payload)
             }
             
-            gatewayEvent?.let { _events.tryEmit(it) }
+            gatewayEvent?.let { _eventChannel.trySend(it) }
             
             // Update state version
             eventFrame.stateVersion?.let { version ->
