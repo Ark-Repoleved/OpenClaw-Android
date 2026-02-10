@@ -97,10 +97,23 @@ fun ChatScreen(
         }
     }
     
-    // Auto-scroll to bottom when new message arrives
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
+    // Filter out messages that shouldn't be shown to users
+    val filteredMessages = remember(messages) {
+        messages.filter { msg ->
+            val role = msg.message?.role?.lowercase() ?: ""
+            if (role in listOf("toolresult", "tool", "system", "toolcall")) {
+                return@filter false
+            }
+            val content = extractMessageContent(msg)
+            content.isNotBlank()
+        }
+    }
+
+    // Auto-scroll to bottom when new message arrives or typing indicator appears
+    LaunchedEffect(filteredMessages.size, isAiTyping) {
+        if (filteredMessages.isNotEmpty()) {
+            val lastIndex = filteredMessages.size - 1 + if (isAiTyping) 1 else 0
+            listState.animateScrollToItem(lastIndex)
         }
     }
     
@@ -171,19 +184,6 @@ fun ChatScreen(
                     )
                 }
                 else -> {
-                    // Filter out messages that shouldn't be shown to users
-                    val filteredMessages = messages.filter { msg ->
-                        val role = msg.message?.role?.lowercase() ?: ""
-                        // Hide tool results, tool calls, and system messages
-                        if (role in listOf("toolresult", "tool", "system", "toolcall")) {
-                            return@filter false
-                        }
-                        
-                        // Also filter out messages with empty content
-                        val content = extractMessageContent(msg)
-                        content.isNotBlank()
-                    }
-                    
                     LazyColumn(
                         state = listState,
                         contentPadding = PaddingValues(16.dp),

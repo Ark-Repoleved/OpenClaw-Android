@@ -32,6 +32,7 @@ class SettingsRepository(private val context: Context) {
         private val KEY_USE_DYNAMIC_COLOR = booleanPreferencesKey("use_dynamic_color")
         private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
         private val KEY_LAST_SESSION_KEY = stringPreferencesKey("last_session_key")
+        private val KEY_NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
     }
     
     /**
@@ -117,6 +118,22 @@ class SettingsRepository(private val context: Context) {
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { preferences ->
             preferences[KEY_THEME_MODE] = mode.name
+        }
+    }
+    
+    /**
+     * Get notifications enabled preference
+     */
+    val notificationsEnabled: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[KEY_NOTIFICATIONS_ENABLED] ?: true
+    }
+    
+    /**
+     * Update notifications enabled preference
+     */
+    suspend fun setNotificationsEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_NOTIFICATIONS_ENABLED] = enabled
         }
     }
     

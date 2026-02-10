@@ -1,6 +1,7 @@
 package com.openclaw.dashboard
 
 import android.app.Application
+import com.openclaw.dashboard.util.NotificationHelper
 
 class OpenClawApp : Application() {
     
@@ -12,5 +13,6 @@ class OpenClawApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        NotificationHelper.createNotificationChannels(this)
     }
 }

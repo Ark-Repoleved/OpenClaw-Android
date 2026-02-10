@@ -14,6 +14,7 @@ import com.openclaw.dashboard.data.remote.GatewayClient
 import com.openclaw.dashboard.data.remote.GatewayEvent
 import com.openclaw.dashboard.data.repository.SettingsRepository
 import com.openclaw.dashboard.data.repository.ThemeMode
+import com.openclaw.dashboard.util.NotificationHelper
 import com.openclaw.dashboard.R
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -53,6 +54,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         true
     )
     
+    // Notification settings
+    val notificationsEnabled = settingsRepository.notificationsEnabled.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        true
+    )
+    
+    // Track if the app is in foreground
+    private var _isAppInForeground = true
+    
+    fun setAppInForeground(inForeground: Boolean) {
+        _isAppInForeground = inForeground
+        if (inForeground) {
+            // Cancel notification when user returns to the app
+            NotificationHelper.cancelChatNotification(getApplication())
+        }
+    }
+    
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             settingsRepository.setThemeMode(mode)
@@ -62,6 +81,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setUseDynamicColor(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setUseDynamicColor(enabled)
+        }
+    }
+    
+    fun setNotificationsEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setNotificationsEnabled(enabled)
         }
     }
     
@@ -158,6 +183,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                                     val filtered = messages.filter { it.runId != chatEvent.runId }
                                     filtered + chatEvent
                                 }
+                            }
+                        }
+                        
+                        // Send notification for AI replies when app is in background
+                        if (chatEvent.state == "final" && 
+                            chatEvent.message?.role?.lowercase() != "user" &&
+                            !_isAppInForeground &&
+                            notificationsEnabled.value) {
+                            val content = chatEvent.delta ?: chatEvent.message?.content?.toString() ?: ""
+                            if (content.isNotBlank()) {
+                                val sessionTitle = _sessions.value
+                                    .find { it.key == chatEvent.sessionKey }
+                                    ?.let { it.derivedTitle ?: it.label ?: it.key }
+                                NotificationHelper.showChatReplyNotification(
+                                    getApplication(),
+                                    sessionTitle,
+                                    content.replace("\\n", "\n").take(200)
+                                )
                             }
                         }
                     }

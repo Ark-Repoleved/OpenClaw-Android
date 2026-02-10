@@ -18,7 +18,7 @@ import com.openclaw.dashboard.R
 import com.openclaw.dashboard.data.repository.ThemeMode
 
 /**
- * Settings popup dialog for theme and language configuration
+ * Settings popup dialog for theme, notification, and language configuration
  */
 @Composable
 fun SettingsDialog(
@@ -27,7 +27,9 @@ fun SettingsDialog(
     currentThemeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
     useDynamicColor: Boolean,
-    onDynamicColorChange: (Boolean) -> Unit
+    onDynamicColorChange: (Boolean) -> Unit,
+    notificationsEnabled: Boolean,
+    onNotificationsEnabledChange: (Boolean) -> Unit
 ) {
     if (!isOpen) return
     
@@ -105,6 +107,33 @@ fun SettingsDialog(
                     Switch(
                         checked = useDynamicColor,
                         onCheckedChange = onDynamicColorChange
+                    )
+                }
+                
+                HorizontalDivider()
+                
+                // Notifications Section
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.settings_notifications),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = stringResource(R.string.settings_notifications_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = notificationsEnabled,
+                        onCheckedChange = onNotificationsEnabledChange
                     )
                 }
                 

@@ -64,6 +64,11 @@
     <string name="chat_no_session">No sessions available</string>
     <string name="chat_select_a_session">Select a session</string>
     
+    <!-- Notifications -->
+    <string name="notification_channel_chat">AI Replies</string>
+    <string name="notification_channel_chat_desc">Notifications for AI chat replies</string>
+    <string name="notification_chat_default_title">AI Reply</string>
+    
     <!-- Config Screen -->
     <string name="config_title">Config Editor</string>
     <string name="config_saving">Saving…</string>
@@ -120,6 +125,8 @@
     <string name="theme_dark">Dark Mode</string>
     <string name="settings_dynamic_color">Dynamic Color</string>
     <string name="settings_dynamic_color_desc">Use wallpaper colors</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_desc">Notify when AI replies</string>
     <string name="settings_done">Done</string>
     
     <!-- Language -->
