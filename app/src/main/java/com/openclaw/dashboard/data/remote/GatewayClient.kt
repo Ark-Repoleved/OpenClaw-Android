@@ -413,6 +413,10 @@ class GatewayClient {
         val connectParams = buildJsonObject {
             put("minProtocol", 3)
             put("maxProtocol", 3)
+            put("role", "operator")
+            putJsonArray("scopes") {
+                add("operator.admin")
+            }
             
             // Build client object
             putJsonObject("client") {
@@ -483,6 +487,14 @@ class GatewayClient {
     private fun handleResponse(jsonElement: JsonElement) {
         try {
             val response = json.decodeFromJsonElement<ResponseFrame>(jsonElement)
+            
+            // Handle connect failure (connect sends directly, not via request())
+            if (!response.ok && pendingRequests[response.id] == null) {
+                val errorMsg = response.error?.message ?: "Connection rejected"
+                Log.e(TAG, "Connect failed: $errorMsg")
+                _connectionState.value = ConnectionState.Error(errorMsg)
+                return
+            }
             
             // Check if this is the connect response (payload has type: "hello-ok")
             val payload = response.payload
