@@ -68,7 +68,20 @@ data class ConnectParams(
     val maxProtocol: Int = 1,
     val client: ClientInfo,
     val caps: List<String>? = null,
+    val commands: List<String>? = null,
+    val role: String? = null,
+    val scopes: List<String>? = null,
+    val device: DeviceParams? = null,
     val auth: AuthParams? = null
+)
+
+@Serializable
+data class DeviceParams(
+    val id: String,
+    val publicKey: String,
+    val signature: String,
+    val signedAt: Long,
+    val nonce: String? = null
 )
 
 @Serializable
@@ -138,7 +151,9 @@ data class Snapshot(
     val uptimeMs: Long,
     val configPath: String? = null,
     val stateDir: String? = null,
-    val sessionDefaults: SessionDefaults? = null
+    val sessionDefaults: SessionDefaults? = null,
+    val totalInputTokens: Long? = null,
+    val totalOutputTokens: Long? = null
 )
 
 @Serializable

@@ -16,6 +16,8 @@ import com.openclaw.dashboard.data.repository.SettingsRepository
 import com.openclaw.dashboard.data.repository.ThemeMode
 import com.openclaw.dashboard.util.NotificationHelper
 import com.openclaw.dashboard.R
+import com.openclaw.dashboard.data.local.DeviceAuthStore
+import com.openclaw.dashboard.data.local.DeviceIdentityStore
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -26,6 +28,8 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     
     private val settingsRepository = SettingsRepository(application)
+    private val identityStore = DeviceIdentityStore(application)
+    private val authStore = DeviceAuthStore(application)
     private val gatewayClient = GatewayClient()
     
     // Connection settings
@@ -157,6 +161,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "N/A")
     
     init {
+        gatewayClient.initialize(identityStore, authStore)
+        
         // Observe events
         viewModelScope.launch {
             gatewayClient.events.collect { event ->
@@ -545,6 +551,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             disconnect()
             settingsRepository.clearSettings()
+            
+            // Also clear device identity and tokens
+            val identity = identityStore.loadOrCreate()
+            authStore.clearToken(identity.deviceId, "operator")
         }
     }
     

@@ -21,6 +21,15 @@ import kotlin.coroutines.suspendCoroutine
  */
 class GatewayClient {
     
+    private lateinit var identityStore: DeviceIdentityStore
+    private lateinit var authStore: DeviceAuthStore
+    private var connectNonce: String? = null
+
+    fun initialize(identityStore: DeviceIdentityStore, authStore: DeviceAuthStore) {
+        this.identityStore = identityStore
+        this.authStore = authStore
+    }
+
     companion object {
         private const val TAG = "GatewayClient"
         private const val CONNECT_TIMEOUT_SECONDS = 30L
@@ -409,50 +418,118 @@ class GatewayClient {
     }
     
     private fun sendConnect(token: String?, password: String?) {
-        // Build connect params
-        val connectParams = buildJsonObject {
-            put("minProtocol", 3)
-            put("maxProtocol", 3)
-            put("role", "operator")
-            putJsonArray("scopes") {
-                add("operator.admin")
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            val identity = identityStore.loadOrCreate()
+            val deviceId = identity.deviceId
+            val role = "operator"
+            val scopes = listOf("operator.read", "operator.write", "operator.admin")
             
-            // Build client object
-            putJsonObject("client") {
-                put("id", "openclaw-android")
-                put("displayName", "OpenClaw Android")
-                put("version", "1.0.0")
-                put("platform", "android")
-                put("deviceFamily", android.os.Build.MANUFACTURER)
-                put("mode", "ui")
-            }
+            val storedToken = authStore.loadToken(deviceId, role)
+            val effectiveToken = if (!storedToken.isNullOrBlank()) storedToken else token?.trim()
             
-            // Optional caps
-            putJsonArray("caps") {
-                add("tool-events")
-            }
+            val signedAtMs = System.currentTimeMillis()
+            val authPayload = buildDeviceAuthPayload(
+                deviceId = deviceId,
+                clientId = "openclaw-android",
+                clientMode = "ui",
+                role = role,
+                scopes = scopes,
+                signedAtMs = signedAtMs,
+                token = effectiveToken,
+                nonce = connectNonce
+            )
             
-            // Only include auth if we have credentials
-            if (!token.isNullOrBlank() || !password.isNullOrBlank()) {
-                putJsonObject("auth") {
-                    if (!token.isNullOrBlank()) put("token", token)
-                    if (!password.isNullOrBlank()) put("password", password)
+            val signature = identityStore.signPayload(authPayload, identity)
+            val publicKey = identityStore.publicKeyBase64Url(identity)
+
+            // Build connect params
+            val connectParams = buildJsonObject {
+                put("minProtocol", 3)
+                put("maxProtocol", 3)
+                put("role", role)
+                putJsonArray("scopes") {
+                    scopes.forEach { add(it) }
+                }
+                
+                // Build client object
+                putJsonObject("client") {
+                    put("id", "openclaw-android")
+                    put("displayName", "OpenClaw Android")
+                    put("version", "1.0.0")
+                    put("platform", "android")
+                    put("deviceFamily", android.os.Build.MANUFACTURER)
+                    put("mode", "ui")
+                }
+                
+                // Add device identity if signature is available
+                if (signature != null && publicKey != null) {
+                    putJsonObject("device") {
+                        put("id", deviceId)
+                        put("publicKey", publicKey)
+                        put("signature", signature)
+                        put("signedAt", signedAtMs)
+                        connectNonce?.let { put("nonce", it) }
+                    }
+                }
+                
+                // Optional caps
+                putJsonArray("caps") {
+                    add("tool-events")
+                }
+                
+                // Only include auth if we have credentials
+                val passwordTrimmed = password?.trim()
+                if (!effectiveToken.isNullOrBlank() || !passwordTrimmed.isNullOrBlank()) {
+                    putJsonObject("auth") {
+                        if (!effectiveToken.isNullOrBlank()) put("token", effectiveToken)
+                        if (!passwordTrimmed.isNullOrBlank()) put("password", passwordTrimmed)
+                    }
                 }
             }
+            
+            // The handshake must be a request frame: { type: "req", id: "...", method: "connect", params: ConnectParams }
+            val requestFrame = buildJsonObject {
+                put("type", "req")
+                put("id", UUID.randomUUID().toString())
+                put("method", "connect")
+                put("params", connectParams)
+            }
+            
+            val frameJson = json.encodeToString(requestFrame)
+            Log.d(TAG, "Sending connect frame: $frameJson")
+            withContext(Dispatchers.Main) {
+                webSocket?.send(frameJson)
+            }
         }
-        
-        // The handshake must be a request frame: { type: "req", method: "connect", params: ConnectParams }
-        val requestFrame = buildJsonObject {
-            put("type", "req")
-            put("id", UUID.randomUUID().toString())
-            put("method", "connect")
-            put("params", connectParams)
+    }
+
+    private fun buildDeviceAuthPayload(
+        deviceId: String,
+        clientId: String,
+        clientMode: String,
+        role: String,
+        scopes: List<String>,
+        signedAtMs: Long,
+        token: String?,
+        nonce: String?
+    ): String {
+        val scopeString = scopes.joinToString(",")
+        val authToken = token ?: ""
+        val version = if (nonce.isNullOrBlank()) "v1" else "v2"
+        val parts = mutableListOf(
+            version,
+            deviceId,
+            clientId,
+            clientMode,
+            role,
+            scopeString,
+            signedAtMs.toString(),
+            authToken
+        )
+        if (!nonce.isNullOrBlank()) {
+            parts.add(nonce)
         }
-        
-        val frameJson = json.encodeToString(requestFrame)
-        Log.d(TAG, "Sending connect frame: $frameJson")
-        webSocket?.send(frameJson)
+        return parts.joinToString("|")
     }
     
     private fun handleMessage(text: String) {
@@ -478,6 +555,14 @@ class GatewayClient {
             _snapshot.value = helloOk.snapshot
             _connectionState.value = ConnectionState.Connected
             Log.d(TAG, "Connected to server v${helloOk.server.version}")
+            
+            // Store device token if present
+            helloOk.auth?.let { auth ->
+                val identity = identityStore.loadOrCreate()
+                CoroutineScope(Dispatchers.IO).launch {
+                    authStore.saveToken(identity.deviceId, auth.role, auth.deviceToken)
+                }
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to parse hello-ok: ${e.message}")
             _connectionState.value = ConnectionState.Error("Invalid server response")
@@ -536,6 +621,16 @@ class GatewayClient {
                         _snapshot.value = _snapshot.value?.copy(presence = presenceList)
                         GatewayEvent.Presence(presenceList)
                     }
+                }
+                "connect.challenge" -> {
+                    eventFrame.payload?.let { payload ->
+                        val nonce = payload.jsonObject["nonce"]?.jsonPrimitive?.contentOrNull
+                        if (nonce != null) {
+                            Log.d(TAG, "Received connect challenge nonce: $nonce")
+                            connectNonce = nonce
+                        }
+                    }
+                    null
                 }
                 "agent" -> {
                     eventFrame.payload?.let {
