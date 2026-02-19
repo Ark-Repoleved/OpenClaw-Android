@@ -147,7 +147,10 @@ class GatewayClient {
             
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 Log.d(TAG, "WebSocket closed: $code - $reason")
-                _connectionState.value = ConnectionState.Disconnected
+                val isPairing = _connectionState.value is ConnectionState.PairingRequired
+                if (!isPairing) {
+                    _connectionState.value = ConnectionState.Disconnected
+                }
                 cleanup()
                 // Auto-reconnect unless user explicitly disconnected
                 if (code != 1000) {
@@ -578,9 +581,15 @@ class GatewayClient {
             
             // Handle connect failure (connect sends directly, not via request())
             if (!response.ok && pendingRequests[response.id] == null) {
+                val errorCode = response.error?.code
                 val errorMsg = response.error?.message ?: "Connection rejected"
-                Log.e(TAG, "Connect failed: $errorMsg")
-                _connectionState.value = ConnectionState.Error(errorMsg)
+                Log.e(TAG, "Connect failed: $errorCode - $errorMsg")
+                
+                if (errorCode == "NOT_PAIRED" || errorMsg.contains("pairing required", ignoreCase = true)) {
+                    _connectionState.value = ConnectionState.PairingRequired(errorMsg)
+                } else {
+                    _connectionState.value = ConnectionState.Error(errorMsg)
+                }
                 return
             }
             
@@ -676,6 +685,7 @@ sealed class ConnectionState {
     data object Connecting : ConnectionState()
     data object Connected : ConnectionState()
     data class Reconnecting(val attempt: Int, val maxAttempts: Int) : ConnectionState()
+    data class PairingRequired(val message: String = "Waiting for device pairing approval...") : ConnectionState()
     data class Error(val message: String) : ConnectionState()
 }
 

@@ -68,7 +68,10 @@ fun SetupScreen(
         }
     }
     
-    val isLoading = connectionState is ConnectionState.Connecting
+    val isLoading = connectionState is ConnectionState.Connecting || connectionState is ConnectionState.Reconnecting
+    val isPairing = connectionState is ConnectionState.PairingRequired
+    val pairingMessage = (connectionState as? ConnectionState.PairingRequired)?.message
+    val isError = connectionState is ConnectionState.Error
     val errorMessage = (connectionState as? ConnectionState.Error)?.message
     
     Scaffold(
@@ -328,6 +331,39 @@ fun SetupScreen(
                 }
             }
             
+            // Pairing message
+            AnimatedVisibility(
+                visible = isPairing,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = pairingMessage ?: "Please approve this device on the OpenClaw Dashboard...",
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+            
             Spacer(modifier = Modifier.height(32.dp))
             
             // Connect Button
@@ -343,16 +379,16 @@ fun SetupScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                enabled = dashboardUrl.isNotBlank() && !isLoading
+                enabled = dashboardUrl.isNotBlank() && !isLoading && !isPairing
             ) {
-                if (isLoading) {
+                if (isLoading || isPairing) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary,
                         strokeWidth = 2.dp
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(stringResource(R.string.setup_connecting))
+                    Text(if (isPairing) "Waiting for Approval..." else stringResource(R.string.setup_connecting))
                 } else {
                     Icon(Icons.Filled.Login, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
