@@ -428,6 +428,7 @@ class GatewayClient {
             
             val storedToken = authStore.loadToken(deviceId, role)
             val effectiveToken = if (!storedToken.isNullOrBlank()) storedToken else token?.trim()
+            val finalToken = effectiveToken ?: ""
             
             val signedAtMs = System.currentTimeMillis()
             val authPayload = buildDeviceAuthPayload(
@@ -437,7 +438,7 @@ class GatewayClient {
                 role = role,
                 scopes = scopes,
                 signedAtMs = signedAtMs,
-                token = effectiveToken,
+                token = finalToken,
                 nonce = connectNonce
             )
             
@@ -479,7 +480,7 @@ class GatewayClient {
                     add("tool-events")
                 }
                 
-                // Only include auth if we have credentials
+                // Only include auth if we have real credentials
                 val passwordTrimmed = password?.trim()
                 if (!effectiveToken.isNullOrBlank() || !passwordTrimmed.isNullOrBlank()) {
                     putJsonObject("auth") {
