@@ -122,6 +122,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // BouncyCastle for Ed25519 device identity
-    implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    // BouncyCastle for Ed25519 device identity (1.77 doesn't trigger jetifier v65 error)
+    implementation("org.bouncycastle:bcprov-jdk18on:1.77")
 }
